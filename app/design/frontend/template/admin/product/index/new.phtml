@@ -1,0 +1,347 @@
+<?php
+
+// echo "123";
+// echo "<pre>";
+$result = $this->getProduct();
+$category = $this->categories;
+// die();
+// print_r($result->getName());
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #f6f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h2 {
+            color: #333;
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            align-items: start;
+        }
+
+        .form-group>div {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #4a5568;
+            font-size: 13px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+        }
+
+        textarea {
+            height: 80px;
+            resize: vertical;
+            grid-column: span 2;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+        }
+
+        input[type="color"] {
+            padding: 2px;
+            height: 32px;
+        }
+
+        input[type="range"] {
+            width: calc(100% - 40px);
+            margin-right: 8px;
+        }
+
+        input[type="file"] {
+            padding: 6px;
+        }
+
+        #ratingValue {
+            display: inline-block;
+            min-width: 24px;
+            text-align: right;
+            color: #666;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            background: #357abd;
+        }
+
+        /* Field-specific adjustments */
+        .description-group {
+            grid-column: span 2;
+        }
+
+        .full-width-group {
+            grid-column: 1 / -1;
+        }
+
+        /* Layout for specific fields to match image */
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .field-row-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* Terms & Conditions specific styling */
+        #t_and_c {
+            grid-column: span 3;
+            height: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 16px;
+            }
+
+            .field-row,
+            .field-row-2 {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            textarea,
+            #t_and_c {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="form-container">
+        <form method="POST" action="<?php echo $this->getUrl("*/*/save") ?>" enctype="multipart/form-data">
+            <h2>Enter Product Details</h2>
+
+            <?php if (!empty($result) && !empty($result->getProduct_id())): ?>
+                <input type="hidden" value="<?php echo (!empty($result)) ? $result->getProduct_id() : ''; ?>"
+                    name="catlog_product[product_id]" readonly>
+            <?php endif; ?>
+
+            <div class="form-group">
+                <label for="name">Product Name:</label>
+                <input type="text" id="name" name="catlog_product[name]"
+                    value="<?php echo (!empty($result)) ? $result->getName() : ''; ?>" required>
+            </div>
+
+            <div>
+                <?php echo $this->getHtmlField('text', ['id' => 'hello', 'class' => 'abc']) ?>
+                <?php echo $this->getHtmlField('text', ['id' => 'hello12', 'class' => 'abcde']) ?>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <select name="catlog_product[category_id]">
+                    <option value="">Select Category</option>
+                    <?php foreach ($category as $cat):
+                        $select = "";
+                        if (!empty($result)) {
+                            $select = ((int) $cat->getCategoryId() === (int) $result->getCategoryId()) ? "selected" : "";
+                        }
+                        ?>
+                        <option value="<?php echo htmlspecialchars($cat->getcategory_id()) ?>" <?php echo $select; ?>>
+                            <?= htmlspecialchars($cat->getname()) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="catlog_product[description]"
+                    required> <?php echo (!empty($result)) ? $result->getDescription() : ''; ?></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="catlog_category[price]"
+                    value="<?php echo (!empty($result)) ? $result->getPrice() : ''; ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Product Image:</label>
+                <?php if (!empty($result) && !empty($result->getImage())): ?>
+                    <input type="text" name="catlog_product[image]"
+                        value="<?php echo (!empty($result)) ? $result->getImage() : ''; ?>" readonly>
+                    <img src="<?php echo $result->getImage(); ?>" alt="Product Image" width="100" height="100"
+                        style="border-radius: 5px;">
+                <?php endif; ?>
+
+                <input type="file" id="image" name="catlog_product[image]" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <input type="range" id="rating" name="catlog_product[rating]" min="1" max="5" step="0.1"
+                    value="<?php echo (!empty($result)) ? $result->getRating() : '3'; ?>"
+                    oninput="updateRatingValue(this.value)">
+                <span id="ratingValue"><?php echo (!empty($result)) ? $result->getRating() : '3'; ?></span>
+            </div>
+
+            <div class="form-group">
+                <label for="color">Color:</label>
+                <input type="color" id="color" name="catlog_product[color]"
+                    value="<?php echo (!empty($result)) ? $result->getColor() : '#ff0000'; ?>"
+                    onchange="updateColorPreview(this.value)">
+                <span id="colorCode"
+                    style="margin-left: 10px; font-weight: bold; color: #34495e;"><?php echo (!empty($result)) ? $result->getColor() : '#ff0000'; ?></span>
+                <!-- Color code display -->
+            </div>
+
+            <div class="form-group">
+                <label for="size">Size:</label>
+                <input type="number" id="size" name="catlog_product[size]"
+                    value="<?php echo (!empty($result)) ? $result->getSize() : ''; ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="brand">Brand:</label>
+                <input type="text" id="brand" name="catlog_product[brand]"
+                    value="<?php echo (!empty($result)) ? $result->getBrand() : ''; ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="warranty">Warranty (in years):</label>
+                <input type="number" id="warranty" name="catlog_product[warranty]"
+                    value="<?php echo (!empty($result)) ? $result->getWarranty() : ''; ?>" step="0.1">
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" name="catlog_product[weight]"
+                    value="<?php echo (!empty($result)) ? $result->getWeight() : ''; ?>" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="made_in">Made In:</label>
+                <select id="made_in" name="catlog_product[made_in]" required>
+                    <option value="India">India</option>
+                    <option value="China">China</option>
+                    <option value="Russia">Russia</option>
+                    <option value="USA">USA</option>
+                    <option value="UK">UK</option>
+                    <option value="France">France</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="model">Model:</label>
+                <input type="text" id="model" name="catlog_product[model]"
+                    value="<?php echo (!empty($result)) ? $result->getModel() : ''; ?>" required>
+            </div>
+
+            <?php if (empty($result)): ?>
+                <div class="form-group">
+                    <label for="mfg_date">Manufacturing Date:</label>
+                    <input type="date" name="catlog_product[mfg_date]" max="<?php echo date('Y-m-d'); ?>" />
+                </div>
+            <?php endif; ?>
+
+            <div class="form-group">
+                <label for="material">Material:</label>
+                <input type="text" id="material" name="catlog_product[material]"
+                    value="<?php echo (!empty($result)) ? $result->getMaterial() : ''; ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="t_and_c">Terms & Conditions:</label>
+                <textarea id="t_and_c" name="catlog_product[t_and_c]"
+                    required><?php echo (!empty($result)) ? $result->getT_and_c() : ''; ?></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="status">status:</label>
+                <select id="status" name="catlog_product[status]" required>
+                    <option value="0">Enable</option>
+                    <option value="1">disable</option>
+                </select>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <a class="" href="./list">list Product</a>
+
+    </div>
+
+    <script>
+        function updateRatingValue(value) {
+            document.getElementById('ratingValue').textContent = value;
+        }
+
+        function updateColorPreview(color) {
+            document.getElementById('colorCode').textContent = color;
+        }
+    </script>
+</body>
+
+</html>

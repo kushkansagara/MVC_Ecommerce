@@ -1,0 +1,21 @@
+<head>
+    <?php
+
+    // print_r($this->_css);
+    // print_r($this->_js);
+    
+    $Js = $this->getJs();
+    $Css = $this->getCss();
+
+    // print_r($js);
+    ?>
+    <?php foreach ($Js as $j): ?>
+        <script src="<?php echo Mage::getBaseUrl() . 'js/' . $j ?>"></script>
+    <?php endforeach; ?>
+    <?php foreach ($Css as $c): ?>
+        <link rel="stylesheet" href="<?php echo Mage::getBaseUrl() . 'css/' . $c ?>">
+        </link>
+    <?php endforeach; ?>
+
+
+</head>
