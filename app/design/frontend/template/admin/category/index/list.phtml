@@ -1,0 +1,53 @@
+<?php
+$category = $this->getCategory();
+?>
+
+<body>
+    <div class="container-category-list">
+        <h2>Category List</h2>
+        <div class="add-btn">
+            <a href="<?php echo $this->getUrl('*/*/new'); ?>">➕ Add New Category</a>
+        </div>
+
+        <?php if (!empty($this->getCategory())): ?>
+            <table class="table table-bordered table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($this->getCategory() as $category): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($category->getCategoryId()); ?></td>
+                            <td><?php echo htmlspecialchars($category->getname()); ?></td>
+                            <td><?php echo htmlspecialchars($category->getdescription()); ?></td>
+
+                            <td>
+                                <form action='<?php echo $this->getUrl('*/*/delete'); ?>' method='POST'
+                                    style='display:inline-block;'>
+                                    <input type='hidden' name='id'
+                                        value='<?php echo htmlspecialchars($category->getcategoryId()); ?>'>
+                                    <button type='submit' class='btn btn-danger btn-sm'
+                                        onclick='return confirm("Are you sure you want to delete this category?")'>🗑
+                                        Delete</button>
+                                </form>
+
+                                <a href="<?php echo $this->getUrl('*/*/new'); ?>/?id=<?php echo htmlspecialchars($category->getCategoryId()); ?>"
+                                    class="btn-edit">Edit</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p class="text-center">No Categories Found</p>
+        <?php endif; ?>
+    </div>
+</body>
+
+</html>

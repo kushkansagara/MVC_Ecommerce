@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Featured Image Carousel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .carousel-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        body.slider-page {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .carousel-container {
+            width: 1000px;
+            max-width: 100%;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .carousel {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .slide-wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.6s ease;
+        }
+
+        .slide {
+            position: absolute;
+            width: 60%;
+            height: 80%;
+            transition: all 0.6s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide.active {
+            z-index: 10;
+            transform: translateX(0) scale(1);
+            opacity: 1;
+        }
+
+        .slide.prev {
+            z-index: 5;
+            transform: translateX(-50%) scale(0.8);
+            opacity: 0.7;
+            filter: blur(2px);
+        }
+
+        .slide.next {
+            z-index: 5;
+            transform: translateX(50%) scale(0.8);
+            opacity: 0.7;
+            filter: blur(2px);
+        }
+
+        .slide.hidden {
+            z-index: 1;
+            transform: translateX(-100%) scale(0.8);
+            opacity: 0;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide.active .caption {
+            transform: translateY(0);
+        }
+
+        .caption h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .caption p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            z-index: 20;
+        }
+
+        .nav-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background: transparent;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .nav-btn.active {
+            background-color: white;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .arrow:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        #prev {
+            left: 20px;
+        }
+
+        #next {
+            right: 20px;
+        }
+    </style>
+</head>
+<?php
+// $image = $this->getImage();
+echo '<pre>';
+// print_r($image);
+echo '</pre>';
+?>
+
+<body class="slider-page">
+    <div class="carousel-wrapper">
+        <div class="carousel-container">
+            <div class="carousel">
+                <div class="slide-wrapper">
+                    <div class="slide prev" data-index="3">
+                        <img src="/MVC_main/media/product/wireless_mouse.jpg" alt="City Landscape">
+                        <div class="caption">
+                            <h2>Urban Adventure</h2>
+                            <p>Discover the vibrant energy of the city that never sleeps.</p>
+                        </div>
+                    </div>
+                    <div class="slide active" data-index="0">
+                        <img src="/MVC_main/media/product/webcam.jpg" alt="Nature Landscape">
+                        <div class="caption">
+                            <h2>Beautiful Mountains</h2>
+                            <p>Experience the majestic peaks and breathtaking views.</p>
+                        </div>
+                    </div>
+                    <div class="slide next" data-index="1">
+                        <img src="/MVC_main/media/product/wireless_earbuds.jpg" alt="Ocean Landscape">
+                        <div class="caption">
+                            <h2>Ocean Sunset</h2>
+                            <p>Watch the sun disappear into the endless horizon.</p>
+                        </div>
+                    </div>
+                    <div class="slide hidden" data-index="2">
+                        <img src="/MVC_main/media/product/smartwatch.jpg" alt="Forest Landscape">
+                        <div class="caption">
+                            <h2>Enchanted Forest</h2>
+                            <p>Explore the mystical pathways through ancient trees.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <div class="nav-btn active" data-index="0"></div>
+                <div class="nav-btn" data-index="1"></div>
+                <div class="nav-btn" data-index="2"></div>
+                <div class="nav-btn" data-index="3"></div>
+            </div>
+
+            <div class="arrow" id="prev">&#10094;</div>
+            <div class="arrow" id="next">&#10095;</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all slide elements by their data-index attribute
+            let slideElements = {};
+            document.querySelectorAll('.slide').forEach(slide => {
+                const index = parseInt(slide.getAttribute('data-index'));
+                slideElements[index] = slide;
+            });
+
+            const navBtns = document.querySelectorAll('.nav-btn');
+            const prevBtn = document.getElementById('prev');
+            const nextBtn = document.getElementById('next');
+            let autoSlideInterval;
+            const totalSlides = Object.keys(slideElements).length;
+
+            // Function to get the current active slide index
+            function getActiveIndex() {
+                const activeSlide = document.querySelector('.slide.active');
+                return parseInt(activeSlide.getAttribute('data-index'));
+            }
+
+            // Update slide classes to properly position them
+            function updateSlideClasses(activeIndex) {
+                // Determine prev and next indices
+                const prevIndex = (activeIndex - 1 + totalSlides) % totalSlides;
+                const nextIndex = (activeIndex + 1) % totalSlides;
+
+                // Clear all current classes
+                for (let i = 0; i < totalSlides; i++) {
+                    slideElements[i].classList.remove('active', 'prev', 'next', 'hidden');
+                }
+
+                // Set new classes
+                slideElements[activeIndex].classList.add('active');
+                slideElements[prevIndex].classList.add('prev');
+                slideElements[nextIndex].classList.add('next');
+
+                // Set hidden slides
+                for (let i = 0; i < totalSlides; i++) {
+                    if (i !== activeIndex && i !== prevIndex && i !== nextIndex) {
+                        slideElements[i].classList.add('hidden');
+                    }
+                }
+
+                // Update nav buttons
+                navBtns.forEach(btn => {
+                    const btnIndex = parseInt(btn.getAttribute('data-index'));
+                    if (btnIndex === activeIndex) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+
+            function showSlide(index) {
+                updateSlideClasses(index);
+            }
+
+            function nextSlide() {
+                const currentIndex = getActiveIndex();
+                const nextIndex = (currentIndex + 1) % totalSlides;
+                showSlide(nextIndex);
+            }
+
+            function prevSlide() {
+                const currentIndex = getActiveIndex();
+                const prevIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                showSlide(prevIndex);
+            }
+
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(nextSlide, 4000);
+            }
+
+            function resetAutoSlide() {
+                clearInterval(autoSlideInterval);
+                startAutoSlide();
+            }
+
+            // Add event listeners for navigation buttons
+            navBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    showSlide(index);
+                    resetAutoSlide();
+                });
+            });
+
+            // Fix the arrow button event listeners
+            prevBtn.addEventListener('click', function () {
+                prevSlide();
+                resetAutoSlide();
+            });
+
+            nextBtn.addEventListener('click', function () {
+                nextSlide();
+                resetAutoSlide();
+            });
+
+            // Initialize with first slide active and start auto sliding
+            showSlide(0);
+            startAutoSlide();
+
+            // Pause auto slide when hovering on carousel
+            const carouselContainer = document.querySelector('.carousel-container');
+            carouselContainer.addEventListener('mouseenter', function () {
+                clearInterval(autoSlideInterval);
+            });
+
+            carouselContainer.addEventListener('mouseleave', function () {
+                startAutoSlide();
+            });
+        });
+    </script>
+</body>
+
+</html>

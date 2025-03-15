@@ -1,0 +1,95 @@
+<style>
+    /* Enhanced Login Form Styles */
+
+    .content {
+        padding: 40px;
+        background: #ffffff;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        margin: 20px auto;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .content:hover {
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+    }
+
+    h1 {
+        text-align: center;
+        color: #2b6cb0;
+        margin-bottom: 30px;
+        font-size: 2em;
+        font-weight: 700;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #4a5568;
+    }
+
+    input {
+        padding: 14px;
+        border: 2px solid #cbd5e0;
+        border-radius: 8px;
+        font-size: 1em;
+        transition: all 0.3s ease;
+    }
+
+    input:focus {
+        border-color: #2b6cb0;
+        box-shadow: 0 0 10px rgba(43, 108, 176, 0.2);
+    }
+
+    button {
+        padding: 14px;
+        background: linear-gradient(to right, #2b6cb0, #3182ce);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+
+    button:hover {
+        background: linear-gradient(to right, #2c5282, #2b6cb0);
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .content {
+            padding: 30px;
+            width: 95%;
+        }
+    }
+
+    /* Accessibility focus */
+    *:focus-visible {
+        outline: 3px solid rgba(43, 108, 176, 0.5);
+        outline-offset: 2px;
+    }
+</style>
+<?php echo $this->getHtml('formStart', ['method' => 'POST', 'action' => $this->getUrl('*/*/loginPost'), 'enctype' => 'multipart/form-data']); ?>
+
+<?php echo $this->getHtml('label', ['for' => 'username']); ?>
+<?php echo $this->getHtml('text', ['id' => 'username', 'name' => "admin_user[username]", 'value' => ""]); ?>
+
+<?php echo $this->getHtml('label', ['for' => 'password']); ?>
+<?php echo $this->getHtml('password', ['id' => 'password', 'name' => "admin_user[password]", 'value' => ""]); ?>
+
+<button type="submit">Submit</button>
+<?php echo $this->getHtml('formend', []); ?>

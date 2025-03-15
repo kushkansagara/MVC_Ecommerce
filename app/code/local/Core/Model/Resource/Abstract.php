@@ -29,62 +29,30 @@ class core_Model_Resource_Abstract
     {
         return new Core_Model_DB_Adapter();
     }
-    public function load($value)
+    public function load($value, $field = null)
     {
-        $sql = "SELECT * FROM {$this->_tableName} WHERE {$this->_primaryKey} = $value LIMIT 1";
+        $field = (is_null($field)) ? $this->_primaryKey : $field;
 
-        // print_r($this->getAdapter()->fetchRow($sql));
+        $sql = "SELECT * FROM {$this->_tableName} WHERE $field = '$value' LIMIT 1";
         return $this->getAdapter()->fetchRow($sql);
-        // print_r($data);
-
-        // return [];
     }
     public function save($model)
     {
-        // print_r($model);
-        // die();
+        $dbColumns = $this->_getDbColumns();
         $data = $model->getData();
-        // $oldimage = $data['image'];
-        echo "<pre>";
-        print_r($data);
-
 
         $primaryId = 0;
         if (isset($data[$this->_primaryKey]) && $data[$this->_primaryKey]) {
             $primaryId = $data[$this->_primaryKey];
         }
-
-        // if (isset($_FILES['catlog_product']['name']['image']) && $_FILES['catlog_product']['error']['image'] == 0) {
-        //     $uploadDir = Mage::getBaseDir() . "/media/product/";
-
-        //     if (!file_exists($uploadDir)) {
-        //         mkdir($uploadDir, 0777, true);
-        //     }
-
-        //     $fileName = time() . "_" . basename($_FILES['catlog_product']['name']['image']);
-        //     $uploadFilePath = $uploadDir . $fileName;
-        //     $tmpFilePath = $_FILES['catlog_product']['tmp_name']['image'];
-
-        //     if (move_uploaded_file($tmpFilePath, $uploadFilePath)) {
-        //         $data['image'] = "media/product/" . $fileName;
-        //     }
-        // }
-
-        // $newimage = $data['image'];
-
-        print_r($data);
-        // die();
         if ($primaryId) {
-
-            // if ($oldimage != $newimage) {
-            //     unlink($oldimage);
-            //     echo "Image deleted successfully";
-            // }
             $columns = [];
             unset($data[$this->_primaryKey]);
             foreach ($data as $key => $value) {
-                $value = ($value !== null) ? $value : '';
-                $columns[] = sprintf("`{$key}` = '%s'", addslashes($value));
+                if (in_array($key, $dbColumns)) {
+                    $value = ($value !== null) ? $value : '';
+                    $columns[] = sprintf("`{$key}` = '%s'", addslashes($value));
+                }
             }
             $columns = implode(",", $columns);
 
@@ -95,22 +63,20 @@ class core_Model_Resource_Abstract
                 $this->_primaryKey,
                 $primaryId
             );
-
-            return $this->getAdapter()->query($sql);
             // echo $sql;
-            // echo "update";
+            return $this->getAdapter()->query($sql);
         } else {
             $columns = [];
             $values = [];
             foreach ($data as $key => $value) {
-                // $value = ($value !== null) ? $value : '';
-                // $columns[] = sprintf("`{$key}` = '%s'", addslashes($value));
-                $columns[] = $key;
-                $values[] = $value;
+                if (in_array($key, $dbColumns)) {
+                    $values[] = $value;
+                    $columns[] = $key;
+                }
+
             }
             $columns = implode("`,`", $columns);
             $values = implode("','", $values);
-
 
             $sql = sprintf(
                 "INSERT INTO %s (`%s`) VALUES ('%s')",
@@ -118,50 +84,37 @@ class core_Model_Resource_Abstract
                 $columns,
                 $values
             );
-            echo "</pre>";
             // echo $sql;
-            // die();
+            // die;
             $id = $this->getAdapter()->insert($sql);
-            print_r($id);
-
-            $model->load($id);
-            // echo $sql;
-            echo "<pre>";
-            // print_r($data);
-            // echo "Insert";
+            $model->{$this->_primaryKey} = $id;
         }
-        echo get_class($model);
     }
 
     public function delete($model)
     {
-        print_r($model);
-
-
         $data = $model->getData();
-        // $image = $data['image'];
-        // print_r($data);
         $primaryId = 0;
         if (isset($data[$this->_primaryKey]) && $data[$this->_primaryKey]) {
             $primaryId = $data[$this->_primaryKey];
         }
-
-        // if ($primaryId) {
         $sql = sprintf(
             "DELETE FROM %s WHERE %s = %d",
             $this->_tableName,
             $this->_primaryKey,
             $primaryId
         );
-        // unlink($image);
-        // echo $sql;
-        // return $this->getAdapter()->query($sql);
-        // print_r($model);
         if ($this->getAdapter()->query($sql)) {
             $model->setData(null);
         }
-        // }
-
+    }
+    protected function _getDbColumns()
+    {
+        $sql = "SELECT COLUMN_NAME
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = N'{$this->_tableName}'";
+        $column_name = $this->getAdapter()->fetchCol($sql);
+        return $column_name;
     }
 }
 ?>

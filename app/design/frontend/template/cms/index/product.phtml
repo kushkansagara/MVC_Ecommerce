@@ -1,0 +1,752 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            body {
+                background-color: #f5f7fa;
+                color: #333;
+                line-height: 1.6;
+            }
+
+            .container-single-product {
+                width: 90%;
+                max-width: 1200px;
+                margin: 40px auto;
+            }
+
+            .product-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+                background: #ffffff;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                border-radius: 15px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+
+            .product-container:hover {
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+                transform: translateY(-5px);
+            }
+
+            .product-gallery {
+                padding: 0;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .main-image {
+                width: 100%;
+                height: 400px;
+                object-fit: cover;
+                display: block;
+            }
+
+            .thumbnail-container {
+                display: flex;
+                padding: 10px;
+                gap: 10px;
+                background: rgba(255, 255, 255, 0.9);
+            }
+
+            .thumbnail {
+                width: 70px;
+                height: 70px;
+                object-fit: cover;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border: 2px solid transparent;
+            }
+
+            .thumbnail:hover,
+            .thumbnail.active {
+                border-color: #3a7bd5;
+                transform: scale(1.05);
+            }
+
+            .product-details {
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .product-category {
+                color: #3a7bd5;
+                font-weight: 600;
+                font-size: 0.9em;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 10px;
+            }
+
+            .product-title {
+                font-size: 2.2em;
+                font-weight: 700;
+                margin-bottom: 15px;
+                color: #333;
+                line-height: 1.2;
+            }
+
+            .product-price {
+                font-size: 1.8em;
+                font-weight: 700;
+                color: #3a7bd5;
+                margin-bottom: 20px;
+            }
+
+            .stock-info {
+                display: inline-block;
+                padding: 5px 12px;
+                background-color: #e6f7e9;
+                color: #2e7d32;
+                border-radius: 20px;
+                font-size: 0.9em;
+                font-weight: 600;
+                margin-bottom: 25px;
+            }
+
+            .stock-info.low {
+                background-color: #fff3e0;
+                color: #e65100;
+            }
+
+            .stock-info.out {
+                background-color: #ffebee;
+                color: #c62828;
+            }
+
+            .product-description {
+                margin-bottom: 30px;
+                color: #555;
+                line-height: 1.8;
+            }
+
+            .product-attributes {
+                margin-bottom: 30px;
+            }
+
+            .attribute-title {
+                font-weight: 600;
+                margin-bottom: 15px;
+                font-size: 1.1em;
+                color: #333;
+                position: relative;
+                padding-bottom: 8px;
+            }
+
+            .attribute-title::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 50px;
+                height: 2px;
+                background: linear-gradient(to right, #3a7bd5, #00d2ff);
+            }
+
+            .attribute-list {
+                list-style: none;
+            }
+
+            .attribute-item {
+                display: flex;
+                margin-bottom: 8px;
+            }
+
+            .attribute-name {
+                font-weight: 600;
+                width: 120px;
+                color: #555;
+            }
+
+            .attribute-value {
+                color: #333;
+            }
+
+            .product-actions {
+                margin-top: auto;
+            }
+
+            .quantity-selector {
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .quantity-btn {
+                width: 40px;
+                height: 40px;
+                background: #f1f5f9;
+                border: none;
+                color: #333;
+                font-size: 1.2em;
+                cursor: pointer;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+            .quantity-btn:hover {
+                background: #e2e8f0;
+            }
+
+            .quantity-input {
+                width: 60px;
+                height: 40px;
+                text-align: center;
+                border: 2px solid #e2e8f0;
+                margin: 0 10px;
+                font-size: 1em;
+                border-radius: 8px;
+            }
+
+            .add-to-cart {
+                width: 100%;
+                padding: 15px;
+                background: linear-gradient(to right, #3a7bd5, #00d2ff);
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1.05em;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                margin-bottom: 15px;
+                letter-spacing: 0.5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .add-to-cart:hover {
+                background: linear-gradient(to right, #3a6fc7, #00bed9);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(58, 123, 213, 0.4);
+            }
+
+            .add-to-cart:active {
+                transform: translateY(0);
+            }
+
+            .wishlist-btn {
+                background: transparent;
+                border: 2px solid #e2e8f0;
+                color: #555;
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 1em;
+                transition: all 0.3s ease;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .wishlist-btn:hover {
+                border-color: #3a7bd5;
+                color: #3a7bd5;
+            }
+
+            .additional-info {
+                margin-top: 50px;
+                background: #ffffff;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                border-radius: 15px;
+                overflow: hidden;
+            }
+
+            .tab-navigation {
+                display: flex;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .tab-button {
+                padding: 20px 30px;
+                background: transparent;
+                border: none;
+                font-weight: 600;
+                color: #666;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 1em;
+                position: relative;
+            }
+
+            .tab-button.active {
+                color: #3a7bd5;
+            }
+
+            .tab-button.active::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background: linear-gradient(to right, #3a7bd5, #00d2ff);
+            }
+
+            .tab-content {
+                padding: 30px;
+                display: none;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            .similar-products {
+                margin-top: 50px;
+            }
+
+            .section-title {
+                font-size: 1.8em;
+                font-weight: 700;
+                margin-bottom: 30px;
+                color: #333;
+                position: relative;
+                padding-bottom: 15px;
+                text-align: center;
+            }
+
+            .section-title::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100px;
+                height: 3px;
+                background: linear-gradient(to right, #3a7bd5, #00d2ff);
+                border-radius: 2px;
+            }
+
+            .products-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 25px;
+            }
+
+            .product-card {
+                background: #fff;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+            }
+
+            .product-card:hover {
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+                transform: translateY(-5px);
+            }
+
+            .product-card-img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+            }
+
+            .product-card-content {
+                padding: 20px;
+            }
+
+            .product-card-title {
+                font-weight: 600;
+                font-size: 1.1em;
+                margin-bottom: 10px;
+                color: #333;
+            }
+
+            .product-card-price {
+                font-weight: 700;
+                color: #3a7bd5;
+                margin-bottom: 15px;
+            }
+
+            .product-card-btn {
+                width: 100%;
+                padding: 10px;
+                background: linear-gradient(to right, #3a7bd5, #00d2ff);
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+            .product-card-btn:hover {
+                background: linear-gradient(to right, #3a6fc7, #00bed9);
+            }
+
+            /* Responsive styles */
+            @media (max-width: 992px) {
+                .product-container {
+                    grid-template-columns: 1fr;
+                }
+
+                .product-gallery {
+                    height: auto;
+                }
+
+                .main-image {
+                    height: 350px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    width: 95%;
+                    margin: 20px auto;
+                }
+
+                .product-details {
+                    padding: 25px;
+                }
+
+                .product-title {
+                    font-size: 1.8em;
+                }
+
+                .tab-button {
+                    padding: 15px 20px;
+                    font-size: 0.9em;
+                }
+
+                .products-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                }
+            }
+
+            @media (max-width: 576px) {
+                .thumbnail {
+                    width: 50px;
+                    height: 50px;
+                }
+
+                .product-price {
+                    font-size: 1.5em;
+                }
+
+                .products-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            /* Icons */
+            .icon {
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+                vertical-align: middle;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="product-container">
+            <div class="product-gallery">
+                <img src="/api/placeholder/600/400" alt="Product Image" class="main-image" id="main-image">
+                <div class="thumbnail-container">
+                    <img src="/api/placeholder/70/70" alt="Thumbnail 1" class="thumbnail active"
+                        onclick="changeImage(this, '/api/placeholder/600/400')">
+                    <img src="/api/placeholder/70/70" alt="Thumbnail 2" class="thumbnail"
+                        onclick="changeImage(this, '/api/placeholder/600/400')">
+                    <img src="/api/placeholder/70/70" alt="Thumbnail 3" class="thumbnail"
+                        onclick="changeImage(this, '/api/placeholder/600/400')">
+                    <img src="/api/placeholder/70/70" alt="Thumbnail 4" class="thumbnail"
+                        onclick="changeImage(this, '/api/placeholder/600/400')">
+                </div>
+            </div>
+
+            <div class="product-details">
+                <div class="product-category">Electronics</div>
+                <h1 class="product-title">Premium Wireless Headphones</h1>
+                <div class="product-price">$129.99</div>
+                <div class="stock-info">In Stock (12 items)</div>
+
+                <p class="product-description">
+                    Experience crystal clear sound with our premium wireless headphones.
+                    Featuring noise cancellation technology, comfortable ear cushions, and
+                    up to 30 hours of battery life. Perfect for music lovers, travelers,
+                    and professionals who appreciate superior sound quality.
+                </p>
+
+                <div class="product-attributes">
+                    <h3 class="attribute-title">Specifications</h3>
+                    <ul class="attribute-list">
+                        <li class="attribute-item">
+                            <span class="attribute-name">Color:</span>
+                            <span class="attribute-value">Midnight Black</span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-name">Battery Life:</span>
+                            <span class="attribute-value">30 hours</span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-name">Connectivity:</span>
+                            <span class="attribute-value">Bluetooth 5.0</span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-name">Weight:</span>
+                            <span class="attribute-value">250g</span>
+                        </li>
+                        <li class="attribute-item">
+                            <span class="attribute-name">Warranty:</span>
+                            <span class="attribute-value">2 years</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="product-actions">
+                    <div class="quantity-selector">
+                        <button class="quantity-btn" onclick="decrementQuantity()">-</button>
+                        <input type="number" value="1" min="1" class="quantity-input" id="quantity">
+                        <button class="quantity-btn" onclick="incrementQuantity()">+</button>
+                    </div>
+
+                    <button class="add-to-cart">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        Add to Cart
+                    </button>
+
+                    <button class="wishlist-btn">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                            </path>
+                        </svg>
+                        Add to Wishlist
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="additional-info">
+            <div class="tab-navigation">
+                <button class="tab-button active" onclick="openTab(event, 'description')">Description</button>
+                <button class="tab-button" onclick="openTab(event, 'specifications')">Specifications</button>
+                <button class="tab-button" onclick="openTab(event, 'reviews')">Reviews</button>
+            </div>
+
+            <div id="description" class="tab-content active">
+                <p>Experience crystal clear sound with our premium wireless headphones. These headphones are designed
+                    for audiophiles and casual listeners alike, delivering exceptional sound quality across all
+                    frequencies.</p>
+                <p>The active noise cancellation technology blocks out ambient noise, allowing you to focus on your
+                    music or calls without distractions. The plush ear cushions provide comfort for extended listening
+                    sessions, while the adjustable headband ensures a perfect fit for all head sizes.</p>
+                <p>With up to 30 hours of battery life, you can enjoy your favorite music all day long without needing
+                    to recharge. When you do need to power up, the fast-charging capability gives you 5 hours of
+                    playback from just 10 minutes of charging.</p>
+                <p>Connect seamlessly to your devices with Bluetooth 5.0 technology, offering a stable connection up to
+                    33 feet away. The built-in microphone ensures clear calls, and the intuitive touch controls on the
+                    ear cups make it easy to adjust volume, skip tracks, or answer calls.</p>
+            </div>
+
+            <div id="specifications" class="tab-content">
+                <table style="width:100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; width: 40%;">Brand
+                        </td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">SoundWave</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Model</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Pro X9</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Color</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Midnight Black</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Connectivity</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Bluetooth 5.0</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Battery Life</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">Up to 30 hours</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Charging Time
+                        </td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">2 hours (full charge)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Fast Charging
+                        </td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">10 min = 5 hours playback</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Driver Size</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">40mm</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Frequency
+                            Response</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">20Hz - 20kHz</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Weight</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">250g</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">Warranty</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">2 years</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="reviews" class="tab-content">
+                <div style="margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <div
+                            style="width: 50px; height: 50px; border-radius: 50%; background-color: #3a7bd5; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 15px;">
+                            JD</div>
+                        <div>
+                            <div style="font-weight: 600;">John Doe</div>
+                            <div style="color: #f9a825; margin: 5px 0;">★★★★★</div>
+                            <div style="font-size: 0.8em; color: #777;">Verified Purchase | October 15, 2024</div>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 10px;">These headphones are amazing! The sound quality is top-notch, and
+                        the noise cancellation works perfectly. I use them during my commute, and they block out all the
+                        subway noise. Battery life is impressive too - I only charge them once a week.</p>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <div
+                            style="width: 50px; height: 50px; border-radius: 50%; background-color: #00d2ff; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 15px;">
+                            AS</div>
+                        <div>
+                            <div style="font-weight: 600;">Alice Smith</div>
+                            <div style="color: #f9a825; margin: 5px 0;">★★★★☆</div>
+                            <div style="font-size: 0.8em; color: #777;">Verified Purchase | September 28, 2024</div>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 10px;">Great headphones overall. The sound quality is excellent and they're
+                        very comfortable to wear for long periods. The only reason I'm giving 4 stars instead of 5 is
+                        that I occasionally experience connectivity issues when I'm more than 20 feet away from my
+                        device.</p>
+                </div>
+
+                <button
+                    style="background: transparent; border: 2px solid #e2e8f0; color: #555; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 20px; transition: all 0.3s ease;">Load
+                    More Reviews</button>
+            </div>
+        </div>
+
+        <div class="similar-products">
+            <h2 class="section-title">You May Also Like</h2>
+            <div class="products-grid">
+                <div class="product-card">
+                    <img src="/api/placeholder/250/200" alt="Related Product 1" class="product-card-img">
+                    <div class="product-card-content">
+                        <h3 class="product-card-title">Wireless Earbuds</h3>
+                        <div class="product-card-price">$79.99</div>
+                        <button class="product-card-btn">View Details</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="/api/placeholder/250/200" alt="Related Product 2" class="product-card-img">
+                    <div class="product-card-content">
+                        <h3 class="product-card-title">Bluetooth Speaker</h3>
+                        <div class="product-card-price">$99.99</div>
+                        <button class="product-card-btn">View Details</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="/api/placeholder/250/200" alt="Related Product 3" class="product-card-img">
+                    <div class="product-card-content">
+                        <h3 class="product-card-title">Charging Case</h3>
+                        <div class="product-card-price">$29.99</div>
+                        <button class="product-card-btn">View Details</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <img src="/api/placeholder/250/200" alt="Related Product 4" class="product-card-img">
+                    <div class="product-card-content">
+                        <h3 class="product-card-title">Audio Cable</h3>
+                        <div class="product-card-price">$19.99</div>
+                        <button class="product-card-btn">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function incrementQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+
+        function decrementQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            if (parseInt(quantityInput.value) > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+            }
+        }
+
+        function changeImage(thumbnail, imageSrc) {
+            // Update main image
+            document.getElementById('main-image').src = imageSrc;
+
+            // Update active thumbnail
+            const thumbnails = document.getElementsByClassName('thumbnail');
+            for (let i = 0; i < thumbnails.length; i++) {
+                thumbnails[i].classList.remove('active');
+            }
+            thumbnail.classList.add('active');
+        }
+
+        function openTab(evt, tabName) {
+            // Hide all tab content
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+
+            // Remove active class from all tab buttons
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+
+            // Show the specific tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to the button that opened the tab
+            evt.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+
+</html> -->

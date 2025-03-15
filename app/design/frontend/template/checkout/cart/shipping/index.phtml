@@ -1,0 +1,146 @@
+<?php
+$allShiping = $this->getAllShipping();
+$cartData = $this->getCartData();
+$cartSubtotal = $this->getCartItemData();
+
+?>
+<div class="checkout-container">
+    <div class="shipping-payment-row">
+        <div class="shipping-container">
+            <h2 class="section-title">Shipping Method</h2>
+            <form id="shippingForm" action="<?php echo $this->getUrl('*/cart_shipping/shipping') ?>" method="post">
+                <div class="shipping-payment-container">
+                    <div class="radio-group">
+                        <?php foreach ($allShiping as $key => $value): ?>
+                        <div
+                            class="radio-option <?php echo (ucfirst($cartData->getShippingMethod()) === ucfirst($key)) ? 'selected' : '' ?>">
+                            <input type="radio" id="shipping-<?php echo $key ?>" name="shipping_method"
+                                value="<?php echo ucfirst($key)?>" class="radio-input"
+                                <?php echo (ucfirst($cartData->getShippingMethod()) === ucfirst($key)) ? 'checked' : '' ?>
+                                onchange="updatePriceAndSubmit('<?php echo $value ?>')">
+
+                            <div class="radio-label">
+                                <div class="radio-label-title"><?php echo ucfirst($key) ?> Shipping</div>
+                                <div class="radio-label-desc">Delivery in 4-6 business days</div>
+                            </div>
+
+                            <div class="radio-price">₹<?php echo $value ?></div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <input type="hidden" id="shipping_price" name="shipping_price" value="">
+                </div>
+            </form>
+        </div>
+
+        <div class="payment-container">
+
+            <h2 class="section-title">Payment Method</h2>
+
+            <div class="radio-group">
+                <div class="radio-option selected" onclick="selectPayment('credit_card')">
+                    <input type="radio" id="payment-credit-card" name="payment_method" value="credit_card"
+                        class="radio-input" checked>
+                    <div class="radio-label">
+                        <div class="radio-label-title">Credit Card</div>
+                        <div class="radio-label-desc">Pay securely with your credit card</div>
+                        <div class="payment-logos">
+                            <i class="fab fa-cc-visa fa-2x payment-logo"></i>
+                            <i class="fab fa-cc-mastercard fa-2x payment-logo"></i>
+                            <i class="fab fa-cc-amex fa-2x payment-logo"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="radio-option" onclick="selectPayment('paypal')">
+                    <input type="radio" id="payment-paypal" name="payment_method" value="paypal" class="radio-input">
+                    <div class="radio-label">
+                        <div class="radio-label-title">PayPal</div>
+                        <div class="radio-label-desc">Pay via PayPal; you can pay with your credit card if you
+                            don't have a PayPal account</div>
+                        <div class="payment-logos">
+                            <i class="fab fa-paypal fa-2x payment-logo"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="radio-option" onclick="selectPayment('upi')">
+                    <input type="radio" id="payment-upi" name="payment_method" value="upi" class="radio-input">
+                    <div class="radio-label">
+                        <div class="radio-label-title">UPI</div>
+                        <div class="radio-label-desc">Pay using UPI apps like Google Pay, PhonePe, Paytm</div>
+                        <div class="payment-logos">
+                            <i class="fas fa-mobile-alt fa-2x payment-logo"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="radio-option" onclick="selectPayment('cod')">
+                    <input type="radio" id="payment-cod" name="payment_method" value="cod" class="radio-input">
+                    <div class="radio-label">
+                        <div class="radio-label-title">Cash on Delivery</div>
+                        <div class="radio-label-desc">Pay with cash upon delivery (additional ₹40 fee applies)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="coupon-container">
+        <h2 class="section-title">Have a Coupon?</h2>
+        <div class="coupon-form">
+            <form action="<?php echo $this->getUrl('*/*/applyCoupon') ?>" method="POST">
+                <input type="text" name='coupon_code' class="coupon-input" placeholder="Enter coupon code"
+                    id="coupon-code"
+                    value="<?php echo !empty($cartData->getCouponCode()) ? $cartData->getCouponCode() : "" ?>">
+                <button class="coupon-button">Apply Coupon</button>
+            </form>
+        </div>
+        <?php if (!empty($cartData) && $cartData->getCouponDiscount() > 0): ?>
+        <div class="active-coupon">
+            <div class="coupon-code">
+                <i class="fas fa-tag"></i>
+                <?php echo $cartData->getCouponCode(); ?>
+                <span class="coupon-savings">(Saved ₹<?php echo $cartData->getCouponDiscount(); ?>)</span>
+            </div>
+            <button class="remove-coupon" onclick="removeCoupon()">
+                <i class="fas fa-times"></i> Remove
+            </button>
+        </div>
+        <?php else: ?>
+        <!-- <div class="coupon-error">
+                Invalid Coupon Code Please Write Valid Coupon Code.
+            </div> -->
+        <?php endif; ?>
+
+    </div>
+    <div class="shipping-payment-container">
+        <h2 class="section-title">Order Summary</h2>
+
+        <div class="order-summary">
+            <div class="summary-row">
+                <div class="summary-label">Subtotal</div>
+                <div class="summary-value">
+                    ₹<?php echo isset($cartSubtotal) ? $cartSubtotal : '0.00'; ?></div>
+            </div>
+
+            <div class="summary-row">
+                <div class="summary-label">Discount</div>
+                <div class="summary-value">
+                    -₹<?php echo isset($cartData) ? $cartData->getCouponDiscount() : '0.00'; ?></div>
+            </div>
+
+            <div class="summary-row">
+                <div class="summary-label">Shipping</div>
+                <div class="summary-value" id="shipping-cost">
+                    ₹<?php echo isset($cartData) ? $cartData->getShippingPrice() : '0.00'; ?></div>
+            </div>
+
+            <div class="summary-row total">
+                <div class="summary-label">Total</div>
+                <div class="summary-value" id="order-total">
+                    ₹<?php echo isset($cartData) ? $cartData->getTotalAmount() : '0.00'; ?></div>
+            </div>
+        </div>
+    </div>
+</div>

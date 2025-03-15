@@ -8,17 +8,18 @@ class Core_Block_Template
     {
         include_once(Mage::getBaseDir() . 'app/design/frontend/template/' . $this->_template);
     }
-
     public function addChild($key, $block)
     {
         $this->_child[$key] = $block;
-        // echo "<pre>";
+        // ;
         // print_r($this->_child);
         return $this;
     }
     public function removeChild($key)
     {
-        $this->_child[$key];
+        if (isset($this->_child[$key])) {
+            unset($this->_child[$key]);
+        }
         return $this;
     }
     public function getChild($key)
@@ -26,7 +27,6 @@ class Core_Block_Template
 
         return isset($this->_child[$key]) ? $this->_child[$key] : "";
     }
-
     public function getChildHtml($key)
     {
         if ($key == '' && count($this->_child)) {
@@ -37,14 +37,12 @@ class Core_Block_Template
             return $Html;
         }
         return isset($this->_child[$key]) ? $this->_child[$key]->toHtml() : "";
-
     }
     public function setTemplate($template)
     {
         $this->_template = $template;
         return $this;
     }
-
     public function getUrl($url)
     {
         $request = Mage::getModel('core/request');
@@ -54,6 +52,11 @@ class Core_Block_Template
         $_url[] = $url[1] == '*' ? $request->getControllerName() : $url[1];
         $_url[] = $url[2] == '*' ? $request->getActionName() : $url[2];
         return Mage::getBaseUrl() . implode("/", $_url);
+    }
+
+    public function getLayout()
+    {
+        return Mage::getBlockSingleton('core/layout');
     }
 }
 ?>

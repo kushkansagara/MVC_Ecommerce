@@ -1,9 +1,16 @@
 <?php
 class Checkout_Block_Cart_Add extends Core_Block_Template
 {
-    // public function __construct()
+    // public function getCartData()
     // {
-    //     $this->setTemplate('catalog/product/list.phtml');
+    //     $request = Mage::getModel('Core/Request');
+    //     $product = $request->getParam('cart');
+    //     $productData = Mage::getModel('catalog/product')->load($product['product_id']);
+    //     return $productData;
+    // }
+    // public function getItems()
+    // {
+
     // }
 }
 ?>

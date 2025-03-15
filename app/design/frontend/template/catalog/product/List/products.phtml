@@ -1,0 +1,24 @@
+<div class="products">
+    <div class="products-grid" id="products-container">
+        <?php foreach ($this->getProduct() as $product): ?>
+            <div class="product">
+                <?php
+                $i = $this->image($product->getProductId());
+                ?>
+                <a href="<?php echo $this->getUrl('*/*/view') ?>/?id=<?php echo $product->getProductId(); ?>">
+                    <div class="product-card">
+                        <img src="/mvc_main/<?php echo $i ?>" alt="Product Image" class="product-image">
+                        <h3 class="product-name"><?php echo $product->getName() ?></h3>
+                        <p class="product-price">$<?php echo $product->getPrice() ?></p>
+                        <button class="view-detail">View details</button>
+                    </div>
+                </a>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<!-- <div id="pagination">
+    <button id="prev-page" disabled>Previous</button>
+    <span id="page-numbers"></span>
+    <button id="next-page">Next</button>
+</div> -->

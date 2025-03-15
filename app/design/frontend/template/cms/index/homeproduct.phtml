@@ -1,0 +1,132 @@
+<?php
+// Generate a unique ID for this ticker instance
+$tickerId = 'ticker-' . uniqid();
+$products = $this->getImageSlider();
+// echo '<pre>';
+// print_r($products);
+// echo '</pre>';
+?>
+
+<div class="product-ticker-container" id="<?= $tickerId ?>">
+    <div class="product-ticker">
+        <?php foreach ($products as $product): ?>
+            <div class="product-item">
+                <div class="product-image">
+                    <img src="<?= $product->getMediaFilePath() ?>" alt="<?= htmlspecialchars($product->getName()) ?>" />
+                </div>
+                <div class="product-details">
+                    <h3 class="product-name">
+                        <?= htmlspecialchars($product->getName()) ?>
+                    </h3>
+                    <p class="product-price">
+                        $<?= number_format($product->getPrice(), 2) ?>
+                    </p>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+        <!-- Duplicate products to create seamless loop -->
+        <?php foreach ($products as $product): ?>
+            <div class="product-item">
+                <div class="product-image">
+                    <img src="<?= $product->getMediaFilePath() ?>" alt="<?= htmlspecialchars($product->getName()) ?>" />
+                </div>
+                <div class="product-details">
+                    <h3 class="product-name">
+                        <?= htmlspecialchars($product->getName()) ?>
+                    </h3>
+                    <p class="product-price">
+                        $<?= number_format($product->getPrice(), 2) ?>
+                    </p>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<style>
+    .product-ticker-container {
+        max-width: 100%;
+        overflow: hidden;
+        margin: 20px auto;
+        padding: 10px 0;
+        background: #f9f9f9;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        position: relative;
+    }
+
+    .product-ticker {
+        display: flex;
+        animation: scroll 30s linear infinite;
+        /* Adjust speed by changing the time */
+        white-space: nowrap;
+    }
+
+    .product-ticker:hover {
+        animation-play-state: paused;
+        /* Pause on hover */
+    }
+
+    .product-item {
+        flex: 0 0 250px;
+        margin: 0 15px;
+        background: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+    }
+
+    .product-details {
+        padding: 8px;
+        text-align: center;
+    }
+
+    .product-name {
+        font-size: 14px;
+        color: #333;
+        margin: 5px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .product-price {
+        font-size: 16px;
+        color: #e74c3c;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+
+    @keyframes scroll {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+            /* Move exactly half way (since we duplicated the items) */
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ticker = document.getElementById('<?= $tickerId ?>');
+        const tickerContent = ticker.querySelector('.product-ticker');
+
+        // Optional: Control speed with JavaScript
+        function setScrollSpeed(speedSeconds) {
+            tickerContent.style.animationDuration = speedSeconds + 's';
+        }
+
+        // You can call this function to change speed if needed
+        // Example: setScrollSpeed(20); // slower
+        // Example: setScrollSpeed(15); // faster
+    });
+</script>

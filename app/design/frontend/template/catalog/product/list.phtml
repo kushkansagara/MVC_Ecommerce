@@ -1,3 +1,26 @@
-<h1>
-    list
-</h1>
+<div class="filters">
+    <div class="top-filter">
+        <div class="top-filter-section">
+            <h3>Search</h3>
+            <input type="text" id="search-input" class="search-input" placeholder="Search product name">
+        </div>
+        <div class="top-filter-section">
+            <h3>Sort By</h3>
+            <select id="sort-select" class="sort-select">
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="newest">Newest Arrivals</option>
+                <option value="popularity">Popularity</option>
+            </select>
+        </div>
+    </div>
+    <div class="main-container">
+        <?php
+        $this->getChildHtml('filter');
+        ?>
+        <?php
+        $this->getChildHtml('products');
+        ?>
+    </div>
+</div>

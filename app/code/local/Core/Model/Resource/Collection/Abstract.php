@@ -9,48 +9,41 @@ class core_Model_Resource_Collection_Abstract
     public function setResource($resource)
     {
         $this->_resource = $resource;
-        // echo "<pre>";
-        // print_r($this);
         return $this;
     }
 
     public function setModel($model)
     {
-
         $this->_model = $model;
-        // echo "<pre>";
-        // print_r($this);
         return $this;
     }
 
-    public function select()
+    public function select($columns = ["*"])
     {
-        $this->_select['FROM'] = $this->_resource->getTableName();
-        $this->_select['COLUMNS'] = ['*'];
-        // echo "<pre>";
-        // print_r($this);
+        $this->_select['FROM'] = ["main_table" => $this->_resource->getTableName()];
+        $this->_select['COLUMNS'] = [];
+        $columns = is_array($columns) ? $columns : [$columns];
+        foreach ($columns as $aleas => $column) {
+            // Mage::log($aleas);
+            // Mage::log($column);
+            if (is_integer($aleas)) {
+                $this->_select['COLUMNS'][] = "main_table." . $column;
+            } else {
+                $this->_select['COLUMNS'][] = sprintf('%s as %s', $aleas, $column);
+            }
+        }
+        return $this;
     }
 
     public function getData()
     {
-        // $sql = sprintf("SELECT %s FROM %s", implode(",", $this->_select['COLUMNS']), $this->_select['FROM']);
         $data = $this->_resource->getAdapter()->fetchAll($this->prepareQuery());
-
-        // echo "<pre>";
-        // print_r($data);
-        // print_r($this);
         foreach ($data as &$_data) {
-            // print_r($this->_model);
             $_model = new $this->_model;
             $_data = $_model->setData($_data);
-            // print_r($this->_model);
-            // print_r($_data);
+
         }
-        // print_r($data);
-
         return $data;
-
-        // print_r($a);
     }
 
     public function addFieldToFilter($field, $condition)
@@ -64,15 +57,52 @@ class core_Model_Resource_Collection_Abstract
 
     public function prepareQuery()
     {
-        $query = sprintf("SELECT %s FROM %s", implode(',', $this->_select['COLUMNS']), $this->_select['FROM']);
-
+        $query = sprintf("SELECT %s FROM %s AS %s", implode(',', $this->_select['COLUMNS']), array_values($this->_select['FROM'])[0], array_keys($this->_select['FROM'])[0]);
         if (isset($this->_select['JOIN_LEFT'])) {
-            $joinsql = "";
-            foreach ($this->_select['JOIN_LEFT'] as $joinLeft) {
-                $joinsql .= sprintf(" LEFT JOIN  %s ON %s ", $joinLeft['tablename'], $joinLeft['condition']);
+            $leftjoinsql = "";
+            foreach ($this->_select["JOIN_LEFT"] as $joinLeft) {
+                $leftjoinsql .= sprintf(
+                    " LEFT JOIN %s AS %s ON %s ",
+                    array_values($joinLeft['tablename'])[0],
+                    array_keys($joinLeft['tablename'])[0],
+                    $joinLeft['condition']
+                );
             }
-            $query = $query . " " . $joinsql;
+            $query .= " " . $leftjoinsql;
         }
+        if (isset($this->_select['JOIN_RIGHT'])) {
+            $rightJoinsql = "";
+            foreach ($this->_select['JOIN_RIGHT'] as $joinRight) {
+                $rightJoinsql .= sprintf(" RIGHT JOIN  %s ON %s ", $joinRight['tablename'], $joinRight['condition']);
+            }
+            $query = $query . " " . $rightJoinsql;
+        }
+        if (isset($this->_select['JOIN_INNER'])) {
+            $innerJoin = "";
+            foreach ($this->_select['JOIN_INNER'] as $joinInner) {
+                $innerJoin .= sprintf(" INNER JOIN  %s ON %s ", $joinInner['tablename'], $joinInner['condition']);
+            }
+            $query = $query . " " . $innerJoin;
+        }
+        if (isset($this->_select['JOIN_SELF'])) {
+            $selfJoinSql = "";
+            foreach ($this->_select['JOIN_SELF'] as $joinSelf) {
+                $selfJoinSql .= sprintf(
+                    " JOIN %s ON %s ",
+                    $joinSelf['tablename'],
+                    $joinSelf['condition']
+                );
+            }
+            $query = $query . " " . $selfJoinSql;
+        }
+        if (isset($this->_select['JOIN_CROSS'])) {
+            $crossJoinSql = "";
+            foreach ($this->_select['JOIN_CROSS'] as $joinCross) {
+                $crossJoinSql .= sprintf(" CROSS JOIN %s ", $joinCross['tablename']);
+            }
+            $query = $query . " " . $crossJoinSql;
+        }
+
         if (isset($this->_select['WHERE'])) {
             $wheresql = "";
             $count = count($this->_select['WHERE']);
@@ -82,11 +112,8 @@ class core_Model_Resource_Collection_Abstract
                     $conditions[] = $this->where($field, $_value);
                 }
             }
-
             $wheresql .= " WHERE " . implode(' AND ', $conditions);
-
             $query = $query . " " . $wheresql;
-
         }
         if (isset($this->_select['GROUPBY'])) {
             $groupBySql = "GROUP BY " . implode(', ', $this->_select['GROUPBY']);
@@ -111,14 +138,13 @@ class core_Model_Resource_Collection_Abstract
             $orderBySql = "ORDER BY " . implode(', ', $this->_select['ORDERBY']);
             $query .= " " . $orderBySql;
         }
+        if (isset($this->_select['LIMIT'])) {
+            $orderBySql = sprintf(" LIMIT %d OFFSET %d", $this->_select['LIMIT'][0], $this->_select['LIMIT'][1]);
+            $query .= " " . $orderBySql;
+        }
 
-        echo $query;
-        die();
         return $query;
     }
-
-
-
 
     public function where($field, $value)
     {
@@ -128,14 +154,13 @@ class core_Model_Resource_Collection_Abstract
                 switch (strtoupper($operator)) {
                     case 'IN':
                     case 'NOT IN':
-
                         $_value = (is_array($_value)) ? $_value : [$_value];
 
                         foreach ($_value as $key => $val) {
 
-                            $inarryvalues[] = (is_string($val)) ? "'{$val}'" : "{$val}";
+                            $inarryvalues[] = (is_string($val)) ? "'{$val}'" : "'{$val}'";
                         }
-                        $_value = implode(',', $inarryvalues);
+                        $_value = implode(",", $inarryvalues);
                         $where = " {$field} {$operator} ({$_value}) ";
                         break;
 
@@ -168,7 +193,61 @@ class core_Model_Resource_Collection_Abstract
 
     public function joinLeft($tableName, $condition, $columns)
     {
-        $this->_select['JOIN_LEFT'][] = ['tablename' => $tableName, 'condition' => $condition, 'columns' => $columns];
+        $this->_select["JOIN_LEFT"][] = [
+            "tablename" => $tableName,
+            "condition" => $condition,
+            "columns" => $columns
+        ];
+
+        foreach ($columns as $alias => $columnname) {
+            $this->_select['COLUMNS'][] = sprintf(
+                "%s.%s AS %s",
+                array_keys($tableName)[0],
+                $columnname,
+                $alias
+            );
+        }
+        return $this;
+    }
+    public function joinRight($tableName, $condition, $columns)
+    {
+        $this->_select['JOIN_RIGHT'][] = ['tablename' => $tableName, 'condition' => $condition, 'columns' => $columns];
+
+        foreach ($columns as $alias => $columnName) {
+            $this->_select['COLUMNS'][] = sprintf("%s.%s AS '%s'", $tableName, $columnName, $alias);
+        }
+        return $this;
+    }
+    public function joinInner($tableName, $condition, $columns)
+    {
+        $this->_select['JOIN_INNER'][] = ['tablename' => $tableName, 'condition' => $condition, 'columns' => $columns];
+
+        foreach ($columns as $alias => $columnName) {
+            $this->_select['COLUMNS'][] = sprintf("%s.%s AS '%s'", $tableName, $columnName, $alias);
+        }
+        return $this;
+    }
+
+    public function joinSelf($tableAlias, $condition, $columns)
+    {
+        $tableName = $this->_select['FROM'];
+        $this->_select['JOIN_SELF'][] = [
+            'tablename' => sprintf("%s AS %s", $tableName, $tableAlias),
+            'condition' => $condition,
+            'columns' => $columns
+        ];
+        foreach ($columns as $alias => $columnName) {
+            $this->_select['COLUMNS'][] = sprintf("%s.%s AS '%s'", $tableAlias, $columnName, $alias);
+        }
+        return $this;
+    }
+
+    public function crossJoin($tableName, $columns)
+    {
+        $this->_select['JOIN_CROSS'][] = [
+            'tablename' => $tableName,
+            'columns' => $columns
+        ];
 
         foreach ($columns as $alias => $columnName) {
             $this->_select['COLUMNS'][] = sprintf("%s.%s AS '%s'", $tableName, $columnName, $alias);
@@ -183,7 +262,7 @@ class core_Model_Resource_Collection_Abstract
     //     foreach ($columns as $columnName) {
     //         $this->_select['GROUPBY'][] = sprintf("%s", $columnName);
     //     }
-    //     echo "<pre>";
+    //     ;
     //     print_r($this);
     //     return $this;
     // }
@@ -193,8 +272,8 @@ class core_Model_Resource_Collection_Abstract
         foreach ($columns as $columnName) {
             $this->_select['GROUPBY'][] = sprintf("%s", $columnName);
         }
-        echo "<pre>";
-        print_r($this);
+        ;
+        // print_r($this);
         return $this;
     }
     public function orderBy($columns)
@@ -202,8 +281,8 @@ class core_Model_Resource_Collection_Abstract
         foreach ($columns as $columnName) {
             $this->_select['ORDERBY'][] = sprintf("%s", $columnName);
         }
-        echo "<pre>";
-        print_r($this);
+        ;
+        // print_r($this);
         return $this;
     }
     public function having($field, $condition)
@@ -214,7 +293,33 @@ class core_Model_Resource_Collection_Abstract
         $this->_select['HAVING'][$field][] = $condition;
         return $this;
     }
+    public function limit($limit, $offset = 0)
+    {
+        // if (!is_array($condition)) {
+        //     $condition = ['eq' => $condition];
+        // }
+        $this->_select['LIMIT'][] = ['limit' => $limit, 'offset' => $offset];
+        return $this;
+    }
 
+    private function getTableAlias($table)
+    {
+        return array_keys($table)[0];
+    }
+    private function getTablename($table)
+    {
+        return array_values($table)[0];
+    }
+
+    public function getFirstItem()
+    {
+        $data = $this->getData();
+        if (isset($data[0])) {
+            return $data[0];
+        } else {
+            return $this->_model;
+        }
+    }
 }
 
 ?>

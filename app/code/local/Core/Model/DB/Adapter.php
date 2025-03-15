@@ -4,7 +4,7 @@ class Core_Model_DB_Adapter
 {
     protected $_config = [
         'hostname' => 'localhost',
-        'dbname' => 'ccc',
+        'dbname' => 'ecommerce',
         'username' => 'root',
         'password' => '',
         'port' => '3307',
@@ -35,8 +35,18 @@ class Core_Model_DB_Adapter
         $result = mysqli_query($this->connect(), $query);
         $data = [];
         while ($row = $result->fetch_assoc()) {
-            // echo "<pre>";
+            // ;
             // print_r($row);
+            $data[] = $row;
+        }
+        return $data;
+    }
+    public function fetchCol($query)
+    {
+        // echo $query;
+        $result = mysqli_query($this->connect(), $query);
+        $data = [];
+        while ($row = $result->fetch_column()) {
             $data[] = $row;
         }
         return $data;
@@ -65,5 +75,6 @@ class Core_Model_DB_Adapter
         return $result;
 
     }
+
 }
 ?>

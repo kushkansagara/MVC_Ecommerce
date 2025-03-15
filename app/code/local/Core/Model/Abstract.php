@@ -45,7 +45,6 @@ class Core_Model_Abstract
             $field = $this->camelToSnake($value);
             return isset($this->_data[$field]) ? $this->_data[$field] : "";
         } else if ($f == 'set') {
-            // print_r($args);
             $value = substr($method, 3);
             $field = $this->camelToSnake($value);
             $this->_data[$field] = $args[0];
@@ -66,13 +65,10 @@ class Core_Model_Abstract
         return ltrim($snakeCase, '_');
     }
 
-    public function load($value)
+    public function load($value, $field = null)
     {
-        if ($value === null) {
-            return null;
-        }
-        $this->_data = $this->getResource()->load($value);
-
+        $this->_data = $this->getResource()->load($value, $field);
+        $this->_afterLoad();
         return $this;
     }
 
@@ -80,13 +76,6 @@ class Core_Model_Abstract
     {
 
         $collection = new $this->_collectionClassName;
-        // print_r($collection);
-        // die();
-        // echo "<pre>";
-        // print_r($this);
-        // die();
-
-        // print_r($this);
         $collection->setResource($this->getResource())
             ->setModel($this)
             ->select();
@@ -96,19 +85,26 @@ class Core_Model_Abstract
 
     public function save()
     {
-        // print_r($this);
-        // die();
+        $this->_beforeSave();
         $this->getResource()->save($this);
+        $this->_afterSave();
         return $this;
     }
     public function delete()
     {
-        // print_r($this);
-        echo "123";
-        print_r($this);
-        // die();
-        print_r($this->getResource()->delete($this));
-        // die();
+        $this->getResource()->delete($this);
+        return $this;
+    }
+    protected function _afterLoad()
+    {
+
+    }
+    protected function _beforeSave()
+    {
+        return $this;
+    }
+    protected function _afterSave()
+    {
         return $this;
     }
 }

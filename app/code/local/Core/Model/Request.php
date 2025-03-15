@@ -5,8 +5,8 @@ class Core_Model_Request
     protected $_moduleName;
     protected $_controllerName;
     protected $_actionName;
-    protected $_baseUrl = 'http://localhost/MVC/';
-    protected $_baseDir = 'C:\xampp\htdocs\MVC';
+    protected $_baseUrl = 'http://localhost/mvc_main/';
+    protected $_baseDir = 'C:\xampp\htdocs\mvc_main';
 
     public function __construct()
     {
@@ -37,7 +37,7 @@ class Core_Model_Request
         // echo $url;
         // die();
         // echo $this->_baseUrl;
-        $url = str_replace("/MVC/", '', $url);
+        $url = str_replace("/mvc_main/", '', $url);
         return $url;
     }
 
@@ -47,20 +47,38 @@ class Core_Model_Request
     }
     public function getParam($field)
     {
+
         if (isset($_POST[$field])) {
             return $_POST[$field];
         } else {
-            return '';
+            return "";
         }
-
     }
-    public function getQuery($field)
+    public function getQuery($field = null)
     {
+        if ($field === null) {
+            return $_GET;
+        }
         if (isset($_GET[$field])) {
             return $_GET[$field];
         } else {
             return '';
         }
+    }
+
+    public function isAjaxRequest()
+    {
+        return $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+
+    }
+    public function isPost()
+    {
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
+
+    }
+    public function isGet()
+    {
+        return $_SERVER['REQUEST_METHOD'] === 'GET';
     }
 }
 ?>

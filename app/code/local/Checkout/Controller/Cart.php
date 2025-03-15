@@ -1,6 +1,6 @@
 <?php
 
-class Checkout_Controller_Cart
+class Checkout_Controller_Cart extends Core_Controller_Front_Action
 {
     public function indexAction()
     {
@@ -9,38 +9,34 @@ class Checkout_Controller_Cart
         $index = $layout->createBlock('Checkout/Cart_Index')
             ->setTemplate('checkout/cart/index.phtml');
         $layout->getChild('content')->addChild('index', $index);
+        $layout->getChild('head')->addCss('main.css')->addCss('checkout/cart/index.css')->addJs('checkout/cart/index.js');
 
         $layout->toHtml();
     }
     public function updateAction()
     {
-        $layout = Mage::getBlock('Core/Layout');
-        $update = $layout->createBlock('Checkout/Cart_Update')
-            ->setTemplate('checkout/cart/update.phtml');
-        $layout->getChild('content')->addChild('update', $update);
-
-        $layout->toHtml();
+        $items = $this->getRequest()->getParams();
+        $cartItem = Mage::getSingleton('checkout/session')
+            ->getCart()->updateItem($items['item_id'], $items['quantity'])->save();
+        $this->redirect('checkout/cart/index');
     }
     public function removeAction()
     {
-        $layout = Mage::getBlock('Core/Layout');
-        $remove = $layout->createBlock('Checkout/Cart_Remove')
-            ->setTemplate('checkout/cart/remove.phtml');
-        $layout->getChild('content')->addChild('remove', $remove);
-
-        $layout->toHtml();
-
+        $id = $this->getRequest()->getQuery('id');
+        $cartItem = Mage::getSingleton('checkout/session')
+            ->getCart()->removeItem($id)->save();
+        $this->redirect('checkout/cart/index');
     }
     public function addAction()
     {
-        echo "asdas";
-        $layout = Mage::getBlock('Core/Layout');
-        $add = $layout->createBlock('Checkout/Cart_Add')
-            ->setTemplate('checkout/cart/add.phtml');
-        $layout->getChild('content')->addChild('add', $add);
-
-        $layout->toHtml();
+        $data = $this->getRequest()->getParams();
+        Mage::getSingleton('checkout/session')->getCart()
+            ->addProduct($data['product_id'], $data['quantity'])
+            ->save();
     }
+
+
+
 }
 
 ?>

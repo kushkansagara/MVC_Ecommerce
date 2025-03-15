@@ -1,7 +1,7 @@
 <?php
 
 $result = $this->getProduct();
-// print_r($this->categories);
+
 ?>
 
 <!DOCTYPE html>
@@ -101,15 +101,15 @@ $result = $this->getProduct();
                 <th>Category_Id</th>
                 <th>Description</th>
                 <th>Price</th>
-                <th>Image</th>
+                <th>Warranty</th>
                 <th>Color</th>
-                <th>Size</th>
-                <th>Brand</th>
-                <th>Made_In</th>
-                <th>Model</th>
-                <th>Mfg_Date</th>
-                <th>Material</th>
-                <th>Status</th>
+                <!-- <th>Weight</th> -->
+                <!-- <th>Size</th> -->
+                <!-- <th>Material</th> -->
+                <!-- <th>Brand</th> -->
+                <!-- <th>Dimensions</th> -->
+                <!-- <th>Releasedate</th> -->
+                <!-- <th>Status</th> -->
                 <th>Edit</th>
                 <th>Delete</th>
             </tr>
@@ -132,39 +132,34 @@ $result = $this->getProduct();
                         <?php echo $result->getPrice(); ?>
                     </td>
                     <td>
-                        <img src="/MVC/<?php echo $result->getImage(); ?>" alt="Product Image" width="100" height="100"
-                            style="border-radius: 5px;">
-                        <!-- <?php //echo $result->getImage(); ?> -->
+                        <?php echo $result->getWarranty(); ?>
                     </td>
-                    <!-- <td>
-                        <?php //echo $result->getPrice(); ?>
-                    </td> -->
                     <td>
                         <?php echo $result->getColor(); ?>
                     </td>
-                    <td>
-                        <?php echo $result->getSize(); ?>
+                    <!-- <td>
+                        <?php //echo $result->getWeight(); ?>
+                    </td> -->
+                    <!-- <td>
+                        <?php //echo $result->getSize(); ?>
                     </td>
                     <td>
-                        <?php echo $result->getBrand(); ?>
+                        <?php //echo $result->getMaterial(); ?>
                     </td>
                     <td>
-                        <?php echo $result->getMade_in(); ?>
+                        <?php //echo $result->getBrand(); ?>
                     </td>
                     <td>
-                        <?php echo $result->getModel(); ?>
-                    </td>
-                    </td>
-                    <td>
-                        <?php echo $result->getMfg_date(); ?>
+                        <?php //echo $result->getDimensions(); ?>
                     </td>
                     <td>
-                        <?php echo $result->getMaterial(); ?>
+                        <?php //echo $result->getReleasedate(); ?>
                     </td>
+
                     <td>
 
-                        <?php echo $result->getStatusText(); ?>
-                    </td>
+                        <?php //echo $result->getStatusText(); ?>
+                    </td> -->
                     <td>
                         <a href='<?php echo $this->getUrl("*/*/new") ?>/?id=<?php echo $result->getProduct_id(); ?>'> <i
                                 class='fa fa-edit' style="color:blue;"></i></a>

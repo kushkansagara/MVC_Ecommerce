@@ -19,13 +19,13 @@ class Admin_Block_Product_Index_List extends Core_Block_Template
     }
     public function getProduct()
     {
-        // $category = Mage::getModel('catalog/category')
-        //     ->getCollection();
 
-        $product = Mage::getModel('catalog/product')
-            ->getCollection();
+        $product = Mage::getSingleton('catalog/filter')
+            ->getProductionCollection()
+            ->addAttributeToSelect(["warranty", "color"]);
         ;
         return $product->getData();
     }
+
 }
 ?>

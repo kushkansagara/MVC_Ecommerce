@@ -1,3 +1,98 @@
-<h1>
-    index
-</h1>
+<?php
+$products = $this->getItem();
+$total = $this->Subtotal();
+$cart = $this->getCart();
+?>
+
+<div class="container">
+    <h1 class="page-title">Your Shopping Cart</h1>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <div>Image</div>
+            <div>Product</div>
+            <div>Price</div>
+            <div>Quantity</div>
+            <div>Total</div>
+            <div></div>
+        </div>
+
+        <div id="cart-items">
+            <?php
+            if (empty($products)): ?>
+                <div class="empty-cart">
+                    <h3>Your cart is empty</h3>
+                    <p>Looks like you haven't added any products to your cart yet.</p>
+                    <a href="<?php echo $this->getUrl('catalog/product/list') ?>" class="continue-shopping">Continue
+                        Shopping</a>
+                </div>
+            <?php else: ?>
+                <?php foreach ($products as $product): ?>
+                    <div class="cart-item">
+                        <?php $productData = $product->getProduct($product->getProductId());
+                        $key = array_search(1, $productData->getMainImage());
+
+                        $filepath = '';
+                        if ($key != '') {
+                            $filepath = $productData->getFilepath()[$key];
+                        } else {
+                            $filepath = isset($productData->getFilepath()[0]) ? $productData->getFilepath()[0] : '';
+                        }
+                        ?>
+                        <div>
+                            <img src="/mvc_main/<?php echo $filepath ?>" alt="<?php echo $productData->getName(); ?>"
+                                class="item-image">
+                        </div>
+                        <div>
+                            <div class="item-name"><?php echo $productData->getName(); ?>
+                            </div>
+                            <div class="item-description"><?php echo $productData->getDescription(); ?></div>
+                        </div>
+                        <div class="item-price">₹<?php echo number_format($productData->getPrice(), 2); ?></div>
+                        <div>
+                            <div class="quantity-control">
+                                <form action="<?php echo $this->getUrl('*/*/update') ?>" method="post">
+                                    <input type="hidden" name="item_id" value="<?php echo $product->getItemId(); ?>">
+                                    <button class="quantity-btn"
+                                        onclick="decrementQuantity(<?php echo $product->getItemId(); ?>)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" name="quantity" min="1"
+                                        value="<?php echo $product->getProductQuantity(); ?>" class="quantity-input"
+                                        data-id="<?php echo $product->getItemId(); ?>"
+                                        id="quantity-<?php echo $product->getItemId(); ?>"
+                                        onchange="updateQuantity(<?php echo $product->getItemId(); ?>, this.value)">
+                                    <button class="quantity-btn"
+                                        onclick="incrementQuantity(<?php echo $product->getItemId(); ?>)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="item-total">
+                            ₹<?php echo number_format($productData->getPrice() * $product->getProductQuantity(), 2); ?>
+                        </div>
+                        <div>
+                            <a href="<?php echo $this->getUrl('*/*/remove') ?>/?id=<?php echo $product->getItemId() ?>">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="cart-summary">
+        <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="subtotal">₹<?php echo number_format($total, 2); ?></span>
+        </div>
+    </div>
+    <?php if ($total > 0): ?>
+        <a href="<?php echo $this->getUrl('*/cart_Address/index') ?>">
+            <button type="submit" class="checkout-button">Complete Order</button>
+        </a>
+    <?php endif ?>
+    </form>
+</div>

@@ -1,3 +1,137 @@
-<h1>
-    view
-</h1>
+<?php
+$product = $this->getProductData();
+?>
+<div class="container-single-product">
+    <div class="single-product-container">
+        <div class="single-product-gallery">
+            <?php if (!empty($product->getFilepath())): ?>
+                <img src="/mvc_main/<?php echo $product->getFilepath()[0]; ?>" alt="Product Image"
+                    class="single-product-main-image" id="main-image">
+                <?php if (count($product->getFilepath()) > 1): ?>
+                    <div class="single-product-thumbnail-container">
+                        <?php foreach ($product->getFilepath() as $index => $imagePath): ?>
+                            <img src="/mvc_main/<?php echo $imagePath; ?>" alt="Thumbnail <?php echo $index + 1; ?>"
+                                class="single-product-thumbnail <?php echo $index === 0 ? 'active' : ''; ?>"
+                                onclick="changeImage(this, '/mvc_main/<?php echo $imagePath; ?>')">
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            <?php else: ?>
+                <img src="/mvc_main/path/to/default-image.jpg" alt="No Image Available" class="single-product-main-image">
+            <?php endif; ?>
+        </div>
+
+        <div class="single-product-details">
+            <div class="single-product-category">Electronics</div>
+            <h1 class="single-product-title"><?php echo $product->getName() ?></h1>
+            <div class="single-product-price">₹<?php echo $product->getPrice() ?></div>
+            <div class="single-product-stock-info">In Stock (<?php echo $product->getStockQuantity() ?> items)</div>
+
+            <p class="single-product-description">
+                <?php echo $product->getDescription() ?>
+            </p>
+
+            <div class="single-product-attributes">
+                <h3 class="single-product-attribute-title">Specifications</h3>
+                <ul class="single-product-attribute-list">
+                    <li class="single-product-attribute-item">
+                        <span class="single-product-attribute-name">Color:</span>
+                        <span class="single-product-attribute-value"><?php echo $product->getColor() ?></span>
+                    </li>
+                    <li class="single-product-attribute-item">
+                        <span class="single-product-attribute-name">Connectivity:</span>
+                        <span class="single-product-attribute-value"><?php echo $product->getConnectorType() ?></span>
+                    </li>
+                    <li class="single-product-attribute-item">
+                        <span class="single-product-attribute-name">Weight:</span>
+                        <span class="single-product-attribute-value"><?php echo $product->getWeight() ?></span>
+                    </li>
+                    <li class="single-product-attribute-item">
+                        <span class="single-product-attribute-name">Warranty:</span>
+                        <span class="single-product-attribute-value"><?php echo $product->getWarranty() ?></span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="single-product-actions">
+                <form action="<?php echo $this->getUrl('checkout/cart/add') ?>" method="post">
+                    <?php echo $this->getHtml('hidden', [
+                        'id' => 'product_id',
+                        'name' => "product_id",
+                        'value' => isset($product) ? htmlspecialchars($product->getProductId()) : ""
+                    ]); ?>
+                    <div class="single-product-quantity-selector">
+                        <h2>Quantity: </h2>
+                        <input type="number" name="quantity" class="single-product-quantity-input" required value="1"
+                            min="1">
+                    </div>
+                    <button class="single-product-add-to-cart" type="submit">
+                        <svg class="single-product-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        Add to Cart
+                    </button>
+                </form>
+
+                <button class="single-product-wishlist-btn">
+                    <svg class="single-product-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                        </path>
+                    </svg>
+                    Add to Wishlist
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="single-product-additional-info">
+        <div class="single-product-tab-navigation">
+            <button class="single-product-tab-button active"
+                onclick="openTab(event, 'description')">Description</button>
+            <button class="single-product-tab-button" onclick="openTab(event, 'specifications')">Specifications</button>
+            <button class="single-product-tab-button" onclick="openTab(event, 'reviews')">Reviews</button>
+        </div>
+
+        <div id="description" class="single-product-tab-content active">
+            <p>Experience crystal clear sound with our premium wireless headphones. These headphones are designed
+                for
+                audiophiles and casual listeners alike, delivering exceptional sound quality across all frequencies.
+            </p>
+            <p>The active noise cancellation technology blocks out ambient noise, allowing you to focus on your
+                music or
+                calls without distractions. The plush ear cushions provide comfort for extended listening sessions,
+                while the adjustable headband ensures a perfect fit for all head sizes.</p>
+            <p>With up to 30 hours of battery life, you can enjoy your favorite music all day long without needing
+                to
+                recharge. When you do need to power up, the fast-charging capability gives you 5 hours of playback
+                from
+                just 10 minutes of charging.</p>
+            <p>Connect seamlessly to your devices with Bluetooth 5.0 technology, offering a stable connection up to
+                33
+                feet away. The built-in microphone ensures clear calls, and the intuitive touch controls on the ear
+                cups
+                make it easy to adjust volume, skip tracks, or answer calls.</p>
+        </div>
+
+        <div id="specifications" class="single-product-tab-content">
+            <table style="width:100%; border-collapse: collapse;">
+                <?php
+                foreach ($product->getData() as $key => $value) {
+                    if (!is_array($value)) {
+                        echo '<tr>';
+                        echo '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600;">' . $key . '</td>';
+                        echo '<td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">' . $value . '</td>';
+                        echo '</tr>';
+                    }
+                }
+                ?>
+            </table>
+        </div>
+    </div>
+</div>
