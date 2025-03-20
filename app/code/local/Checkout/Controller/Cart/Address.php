@@ -5,10 +5,10 @@ class Checkout_Controller_Cart_Address extends Core_Controller_Front_Action
     public function saveAction()
     {
         $address_data = $this->getRequest()->getParams();
+
         $cart = Mage::getSingleton('checkout/session')
             ->getCart()->setEmail($address_data['Email'])->save();
 
-        print_r($this->getRequest()->getParams());
         if ($address_data['billing']) {
 
             $address = Mage::getModel('checkout/cart_address')

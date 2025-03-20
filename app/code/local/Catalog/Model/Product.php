@@ -46,8 +46,6 @@ class Catalog_Model_Product extends Core_Model_Abstract
     {
         $attributes = Mage::getModel('catalog/attribute')->getCollection()->getData();
         foreach ($attributes as $_attribute) {
-            // echo "<pre>";
-            // print_r($_attribute);
             $productAttributes = Mage::getModel('catalog/product_attribute')
                 ->getCollection()
                 ->addFieldToFilter('product_id', $this->getProductId())
@@ -74,8 +72,7 @@ class Catalog_Model_Product extends Core_Model_Abstract
             // die;
             if (!empty($_FILES['catalog_product']['name']['file_path'][0])) {
                 foreach ($_FILES['catalog_product']['name']['file_path'] as $key => $value) {
-                    // echo "123";
-                    // die;
+
                     if (move_uploaded_file($_FILES['catalog_product']['tmp_name']['file_path'][$key], "media/product/$value")) {
                         $imageData['product_id'] = $this->getProductId();
                         $imageData['file_path'] = "media/product/$value";

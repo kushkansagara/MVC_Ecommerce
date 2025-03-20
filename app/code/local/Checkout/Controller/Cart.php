@@ -1,6 +1,6 @@
 <?php
 
-class Checkout_Controller_Cart extends Core_Controller_Front_Action
+class Checkout_Controller_Cart extends Core_Controller_Customer_Action
 {
     public function indexAction()
     {
@@ -30,9 +30,14 @@ class Checkout_Controller_Cart extends Core_Controller_Front_Action
     public function addAction()
     {
         $data = $this->getRequest()->getParams();
+        echo '<pre>';
+        print_r($_POST);
+        echo '</pre>';
         Mage::getSingleton('checkout/session')->getCart()
             ->addProduct($data['product_id'], $data['quantity'])
             ->save();
+        $this->redirect('checkout/cart/index');
+
     }
 
 

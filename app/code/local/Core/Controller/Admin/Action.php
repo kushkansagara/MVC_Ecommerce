@@ -12,7 +12,6 @@ class core_Controller_Admin_Action extends Core_Controller_Front_Action
     {
 
         $isLogin = $this->getSession()->get('login');
-        // print_r($this);
         if (!in_array($this->getRequest()->getActionName(), $this->_allowedActions)) {
             if ($isLogin === 1) {
 
@@ -20,6 +19,11 @@ class core_Controller_Admin_Action extends Core_Controller_Front_Action
                 $this->redirect('admin/account/login');
             }
         }
+    }
+
+    public function getLayout()
+    {
+        return Mage::getBlock('Core/Layout_Admin');
     }
 }
 ?>

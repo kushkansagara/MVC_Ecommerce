@@ -27,18 +27,214 @@
                 </div>
                 <div class="attribute-options">
                     <?php $productAttributes = $this->getProductAttribute($attribute->getAttributeId()); ?>
+
                     <?php foreach ($productAttributes as $productAttribute): ?>
                         <div class="attribute-option">
                             <label>
                                 <input type="checkbox" name="<?php echo htmlspecialchars($attribute->getName()); ?>"
-                                    value="<?php echo htmlspecialchars($productAttribute->getValue()); ?>"
-                                    class="filter-checkbox">
-                                <?php echo htmlspecialchars($productAttribute->getValue()); ?>
+                                    value="<?php echo htmlspecialchars($productAttribute); ?>" class="filter-checkbox">
+                                <?php echo htmlspecialchars($productAttribute); ?>
                             </label>
                         </div>
                     <?php endforeach; ?>
+
                 </div>
             </div>
         <?php endforeach; ?>
     </div>
 </div>
+<?php
+$categories = $this->getCategories();
+$categoryHierarchy = [];
+foreach ($categories as $category) {
+    $parentId = $category->getParentId() ?? 0;
+    $categoryId = $category->getCategoryId();
+
+    if (!isset($categoryHierarchy[$parentId])) {
+        $categoryHierarchy[$parentId] = [];
+    }
+
+    $categoryHierarchy[$parentId][] = $categoryId;
+}
+echo "<script>";
+echo "const categoryHierarchy = " . json_encode($categoryHierarchy, JSON_PRETTY_PRINT) . ";";
+echo "</script>";
+?>
+
+<script>
+    const FilterApp = {
+        init: function () {
+            this.bindEvents();
+        },
+
+        bindEvents: function () {
+            $(".filter-checkbox").on("input", this.fetchFilteredProducts);
+        },
+
+        fetchFilteredProducts: function () {
+            let formData = FilterApp.collectFilterData();
+            FilterApp.updateURL(formData);
+            $("#products-container").html("<p>Loading products...</p>");
+            $.ajax({
+                url: "http://localhost/mvc_main/catalog/product/list/",
+                type: "GET",
+                data: formData,
+                success: function (response) {
+                    let $response = $(response);
+                    let $productsGrid = $response.find(".products-grid");
+                    $("#products-container").html($productsGrid);
+                },
+                error: function (error) {
+                    console.log("Error fetching products:", error);
+                    $("#products-container").html("<p>Failed to load products. Please try again.</p>");
+                },
+            });
+        },
+
+        updateURL: function (filters) {
+            let queryParams = new URLSearchParams(filters).toString();
+            window.history.pushState({}, "", `?${queryParams}`);
+        },
+
+        fetchProductsFromURL: function () {
+            let urlParams = new URLSearchParams(window.location.search);
+            let filters = {};
+
+            urlParams.forEach((value, key) => {
+                filters[key] = value.split(",");
+            });
+
+            if (Object.keys(filters).length > 0) {
+                FilterApp.restoreFilters(filters);
+                this.fetchFilteredProducts();
+            }
+        },
+
+        restoreFilters: function (filters) {
+            $.each(filters, function (key, value) {
+                if (Array.isArray(value)) {
+                    $('.filter-checkbox[name="' + key + '"]').each(function () {
+                        $(this).prop("checked", value.includes($(this).val()));
+                    });
+                } else {
+                    $("#" + key).val(value);
+                }
+            });
+        },
+
+        collectFilterData: function () {
+            let filters = {};
+            $(".filter-checkbox:checked").each(function () {
+                let name = $(this).attr("name");
+                let value = $(this).val();
+
+                if (!filters[name]) {
+                    filters[name] = [];
+                }
+                let categoryIds = getAllCategoryIds(categoryHierarchy, value);
+                filters[name] = [...new Set([...filters[name], ...categoryIds])];
+            });
+
+            return filters;
+        },
+        searchInput: function () {
+            $("#search-input").on("input", function () {
+                let input = $("#search-input").val().toLowerCase();
+                $(".product").each(function () {
+                    let productName = $(this).find(".product-name").text().toLowerCase();
+                    console.log(productName);
+
+                    if (productName.includes(input)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                console.log(input);
+            });
+        },
+        sortProducts: function () {
+            $("#sort-select").on("change", function () {
+                let option = $("#sort-select").val();
+
+                let products = $(".product-card").toArray();
+
+                products.sort((a, b) => {
+                    let priceA = parseFloat(
+                        $(a).find(".product-price").text().substring(1)
+                    );
+                    let priceB = parseFloat(
+                        $(b).find(".product-price").text().substring(1)
+                    );
+
+                    if (option === "price-asc") {
+                        return priceA - priceB;
+                    } else if (option === "price-desc") {
+                        return priceB - priceA;
+                    }
+                });
+                $("#products-container").empty();
+                products.forEach((product) => {
+                    $("#products-container").append(product);
+                });
+            });
+        },
+
+        priceRange: function () {
+            $(".price-inputs").on("change", function () {
+                let min = parseFloat($("#min-price").val());
+                let max = parseFloat($("#max-price").val());
+                let products = $(".product").toArray();
+                products.forEach((product) => {
+                    let productPrice = $(product)
+                        .find(".product-price")
+                        .text()
+                        .substring(1);
+                    console.log(productPrice);
+                    if (productPrice >= min && productPrice <= max) {
+                        $(product).show();
+                    } else {
+                        $(product).hide();
+                    }
+                });
+            });
+        },
+    };
+
+    $(document).ready(function () {
+        FilterApp.init();
+        // FilterApp.fetchProductsFromEncodedURL();
+        FilterApp.searchInput();
+        FilterApp.sortProducts();
+        FilterApp.priceRange();
+    });
+
+
+    // Function to get all subcategory IDs
+    function getAllCategoryIds(hierarchy, categoryId) {
+        let allCategoryIds = [];
+        const subcategories = hierarchy[categoryId] || [];
+
+        allCategoryIds.push(categoryId); // Include the selected category
+
+        subcategories.forEach(subId => {
+            allCategoryIds = [...allCategoryIds, ...getAllCategoryIds(hierarchy, subId)];
+        });
+
+        return allCategoryIds;
+    }
+
+
+    $(document).on("click", ".attribute-header", function () {
+        toggleAttribute(this);
+    });
+
+    function toggleAttribute(header) {
+        var options = $(header).next(".attribute-options");
+        if (options.length > 0) {
+            options.slideToggle(300).toggleClass("active");
+        } else {
+            console.warn("No options found for:", header);
+        }
+    }
+</script>

@@ -20,4 +20,8 @@ class Checkout_Block_Cart_Shipping_Index extends Core_Block_Template
         }
         return $total;
     }
+    public function getAllPayment()
+    {
+        return Mage::getModel('checkout/cart_payment')->getAllPayment();
+    }
 }

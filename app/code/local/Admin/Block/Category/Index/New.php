@@ -27,8 +27,7 @@ class Admin_Block_Category_Index_New extends Core_Block_Template
         } else {
             $this->_result = null;
         }
-        // print_r($this->_result);
-        // die;
+
         return $this->_result;
     }
     public function getCategoryForEdit()

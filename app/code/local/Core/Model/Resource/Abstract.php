@@ -21,7 +21,6 @@ class core_Model_Resource_Abstract
 
     public function getTableName()
     {
-        // print_r($this);
         return $this->_tableName;
     }
 
@@ -33,7 +32,7 @@ class core_Model_Resource_Abstract
     {
         $field = (is_null($field)) ? $this->_primaryKey : $field;
 
-        $sql = "SELECT * FROM {$this->_tableName} WHERE $field = '$value' LIMIT 1";
+        $sql = "SELECT * FROM `{$this->_tableName}` WHERE $field = '$value' LIMIT 1";
         return $this->getAdapter()->fetchRow($sql);
     }
     public function save($model)
@@ -63,7 +62,6 @@ class core_Model_Resource_Abstract
                 $this->_primaryKey,
                 $primaryId
             );
-            // echo $sql;
             return $this->getAdapter()->query($sql);
         } else {
             $columns = [];
@@ -79,13 +77,11 @@ class core_Model_Resource_Abstract
             $values = implode("','", $values);
 
             $sql = sprintf(
-                "INSERT INTO %s (`%s`) VALUES ('%s')",
+                "INSERT INTO `%s` (`%s`) VALUES ('%s')",
                 $this->_tableName,
                 $columns,
                 $values
             );
-            // echo $sql;
-            // die;
             $id = $this->getAdapter()->insert($sql);
             $model->{$this->_primaryKey} = $id;
         }

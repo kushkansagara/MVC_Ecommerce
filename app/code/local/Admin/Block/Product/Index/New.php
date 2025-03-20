@@ -37,9 +37,6 @@ class Admin_Block_Product_Index_New extends Core_Block_Template
     public function getCategories()
     {
         $data = Mage::getModel('catalog/category')->getCollection()->getData();
-        // echo "<pre>";
-        // print_r($data);
-        // die;
         return $data;
     }
     public function getAttributeCol()

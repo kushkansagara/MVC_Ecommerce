@@ -27,10 +27,10 @@
 
 body {
     background-color: var(--neutral-50);
-    background-color: #333333;
+    /* background-color: #333333; */
 
     color: var(--neutral-800);
-    color: #ffffff;
+    /* color: #ffffff; */
     min-height: 100vh;
     display: flex;
     flex-direction: column;

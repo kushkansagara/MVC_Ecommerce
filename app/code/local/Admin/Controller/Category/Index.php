@@ -32,7 +32,7 @@ class Admin_Controller_Category_Index extends Core_Controller_Admin_Action
     }
     public function saveAction()
     {
-        ;
+
         $request = Mage::getModel('core/request');
         $Category = Mage::getModel('catalog/Category');
         $Category->setData($request->getParam('catalog_category'));
@@ -67,8 +67,6 @@ class Admin_Controller_Category_Index extends Core_Controller_Admin_Action
         $Category = Mage::getModel('catalog/Category');
         $id = $request->getQuery('id');
         $Category->load($id);
-        // print_r($request->getParam('catlog_Category'));
-        // $Category->setData($request->getParam('catlog_Category'));
         $oldImage = $Category->getImage();
 
         if ($oldImage) {
@@ -78,13 +76,6 @@ class Admin_Controller_Category_Index extends Core_Controller_Admin_Action
 
 
         header('Location: http://localhost/mvc_main/admin/Category_index/list');
-
-        // $layout = Mage::getBlock('Core/Layout');
-        // $delete = $layout->createBlock('Admin/Category_Index_Delete')
-        //     ->setTemplate('Admin/Category/index/delete.phtml');
-        // $layout->getChild('content')->addChild('delete', $delete);
-
-        // $layout->toHtml();
     }
 
 }

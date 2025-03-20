@@ -227,3 +227,8 @@ input:-webkit-autofill:focus {
 .button-container {
     margin-bottom: 20px;
 }
+
+.err-span{
+    color: red;
+    size: 14px;
+}

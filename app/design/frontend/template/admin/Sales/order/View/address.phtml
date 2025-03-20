@@ -1,0 +1,5 @@
+<?php $Billingaddress = $this->getBillingAddress() ?>
+
+<?php $Shippingaddress = $this->getShippingAddress()->getData() ?>
+
+<p><strong>Shipping Address:</strong><?php echo $Billingaddress->getAddressId() ?></p>

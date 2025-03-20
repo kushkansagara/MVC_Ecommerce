@@ -70,7 +70,7 @@ $cart = $this->getCart();
                             </div>
                         </div>
                         <div class="item-total">
-                            ₹<?php echo number_format($productData->getPrice() * $product->getProductQuantity(), 2); ?>
+                            ₹<?php echo number_format($product->getSubtotal()); ?>
                         </div>
                         <div>
                             <a href="<?php echo $this->getUrl('*/*/remove') ?>/?id=<?php echo $product->getItemId() ?>">

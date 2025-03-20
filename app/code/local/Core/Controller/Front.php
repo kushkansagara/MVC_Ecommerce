@@ -20,11 +20,6 @@ class Core_Controller_Front
         $class = new $controller();
         $class->$actionName();
 
-
-
-        // $class = $moduleName . '_Controller_' . $controllerName;
-        // print_r($class);
-
     }
 }
 ?>

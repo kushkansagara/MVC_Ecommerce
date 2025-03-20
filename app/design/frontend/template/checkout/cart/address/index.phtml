@@ -7,7 +7,8 @@ $cartSubtotal = $this->getCartItemData();
 ?>
 
 <div class="checkout-container">
-    <form action="<?php echo $this->getUrl('*/cart_Address/save') ?>" method="post">
+    <form action="<?php echo $this->getUrl('*/cart_Address/save') ?>" method="post" class="triger_on_submit"
+        id="checkout-address-form">
         <div class="address-container">
             <h2 class="section-title">Billing Information</h2>
             <div class="form-section">
@@ -16,37 +17,38 @@ $cartSubtotal = $this->getCartItemData();
                         <label for="firstName">First Name</label>
                         <input type="text" id="firstName" name="Firstname"
                             value="<?php echo !empty($Billingaddress) ? $Billingaddress->getFirstName() : '' ?>"
-                            class="form-control">
+                            class="form-control required validate-alphabet">
                     </div>
                     <div class="form-group">
                         <label for="lastName">Last Name</label>
                         <input type="text" id="lastName" name="Lastname"
                             value="<?php echo !empty($Billingaddress) ? $Billingaddress->getLastName() : '' ?>"
-                            class="form-control">
+                            class="form-control required validate-alphabet">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" name="Email" class="form-control">
+                        <input type="email" id="email" name="Email" class="validate-email required">
                     </div>
                     <div class="form-group">
                         <label for="phoneNumber">Phone Number</label>
                         <input type="tel" id="phoneNumber"
                             value="<?php echo !empty($Billingaddress) ? $Billingaddress->getPhoneNumber() : '' ?>"
-                            name="Phonenumber" class="form-control">
+                            name="Phonenumber" class="form-control required validate-phonenumber">
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
                 <h2 class="section-title">Billing Address</h2>
+                <input type="hidden" value="<?php echo $Billingaddress->getAddressId() ?>" name="billing[address_id]">
                 <div class="form-group">
                     <label for="billingStreet">Address</label>
                     <input type="text" id="billingStreet" name="billing[StreetAddress]"
                         value="<?php echo !empty($Billingaddress) ? $Billingaddress->getStreetAddress() : '' ?>"
-                        class="form-control">
+                        class="form-control required validate-address">
                 </div>
 
                 <div class="form-row">
@@ -54,21 +56,21 @@ $cartSubtotal = $this->getCartItemData();
                         <label for="billingCity">City</label>
                         <input type="text" id="billingCity"
                             value="<?php echo !empty($Billingaddress) ? $Billingaddress->getCity() : '' ?>"
-                            name="billing[City]" class="form-control">
+                            name="billing[City]" class="form-control required validate-alphabet">
                     </div>
                     <div class="form-group">
                         <label for="billingZipCode">Postal Code</label>
                         <input type="text" id="billingZipCode"
                             value="<?php echo !empty($Billingaddress) ? $Billingaddress->getZipcode() : '' ?>"
-                            name="billing[Zipcode]" class="form-control">
+                            name="billing[Zipcode]" class="form-control required validate-postalcode">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="billingCountry">Country</label>
-                        <select id="billingCountry" name="billing[Country]" class="form-control">
-                            <option value="Select Country" disabled selected>Select Country</option>
+                        <select id="billingCountry" name="billing[Country]" class="form-control required">
+                            <option value="" disabled selected>Select Country</option>
                             <option value="India">India</option>
                             <option value="United States">United States</option>
                             <option value="Canada">Canada</option>
@@ -78,15 +80,18 @@ $cartSubtotal = $this->getCartItemData();
                     </div>
                     <div class="form-group">
                         <label for="billingRegion">State/Province</label>
-                        <select id="billingRegion" name="billing[Region]" class="form-control">
-                            <option value="Select State" disabled selected>Select State</option>
+                        <select id="billingRegion" name="billing[Region]" class="form-control required">
+                            <option value="" disabled selected>Select State</option>
                             <option value="State1">State 1</option>
                             <option value="State2">State 2</option>
                         </select>
                     </div>
                 </div>
             </div>
-
+            <div class="form-group">
+                <label for="sameAsBilling">Same as Billing Address</label>
+                <input type="checkbox" id="sameAsBilling" name="sameAsBillinginput">
+            </div>
             <div class="button-container">
                 <button type="button" id="toggleShipping" class="btn btn-primary">
                     Change Shipping Address
@@ -95,31 +100,32 @@ $cartSubtotal = $this->getCartItemData();
 
             <div class="form-section hidden" id="shippingSection">
                 <h2 class="section-title">Shipping Address</h2>
-                <div class="form-group">
-                    <label for="sameAsBilling">Same as Billing Address</label>
-                    <input type="checkbox" id="sameAsBilling" name="sameAsBilling">
-                </div>
+
+                <input type="hidden" value="<?php echo $Shippingaddress->getAddressId() ?>" name="shipping[address_id]">
                 <div class="form-group">
                     <label for="shippingStreet">Address</label>
-                    <input type="text" id="shippingStreet" name="shipping[StreetAddress]" class="form-control">
+                    <input type="text" id="shippingStreet" name="shipping[StreetAddress]"
+                        class="form-control required validate-address">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="shippingCity">City</label>
-                        <input type="text" id="shippingCity" name="shipping[City]" class="form-control">
+                        <input type="text" id="shippingCity" name="shipping[City]"
+                            class="form-control required validate-alphabet">
                     </div>
                     <div class="form-group">
                         <label for="shippingZipCode">Postal Code</label>
-                        <input type="text" id="shippingZipCode" name="shipping[Zipcode]" class="form-control">
+                        <input type="text" id="shippingZipCode" name="shipping[Zipcode]"
+                            class="form-control required validate-postalcode">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="shippingCountry">Country</label>
-                        <select id="shippingCountry" name="shipping[Country]" class="form-control">
-                            <option value="Select Country" disabled selected>Select Country</option>
+                        <select id="shippingCountry" name="shipping[Country]" class="form-control required">
+                            <option value="" disabled selected>Select Country</option>
                             <option value="India">India</option>
                             <option value="United States">United States</option>
                             <option value="Canada">Canada</option>
@@ -129,8 +135,8 @@ $cartSubtotal = $this->getCartItemData();
                     </div>
                     <div class="form-group">
                         <label for="shippingRegion">State/Province</label>
-                        <select id="shippingRegion" name="shipping[Region]" class="form-control">
-                            <option value="Select State" disabled selected>Select State</option>
+                        <select id="shippingRegion" name="shipping[Region]" class="form-control required">
+                            <option value="" disabled selected>Select State</option>
                             <option value="State1">State 1</option>
                             <option value="State2">State 2</option>
                         </select>
@@ -141,3 +147,107 @@ $cartSubtotal = $this->getCartItemData();
         </div>
     </form>
 </div>
+
+<script>
+    class FormValidator {
+        constructor(form) {
+            this.form = form;
+            this.validationRules = {
+                "validate-email": this.validateEmail,
+                "validate-alphabet": this.validateAlphabet,
+                "validate-phonenumber": this.validatePhoneNumber,
+                "validate-address": this.validateAddress,
+                "validate-postalcode": this.validatePostalCode,
+                "required": this.validateRequired,
+            };
+            this.observeInputs();
+            this.setupFormSubmission();
+        }
+
+        validateRequired(input) {
+            return input.value.trim() ? "" : "This field is required";
+        }
+
+        validateEmail(input) {
+            const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+            return emailRegex.test(input.value) ? "" : "Invalid email format";
+        }
+
+        validatePhoneNumber(input) {
+            const phoneRegex = /^[6789]\d{9}$/;
+            return phoneRegex.test(input.value) ? "" : "Only numbers allowed";
+        }
+
+        validateAddress(input) {
+            const addressRegex = /^[A-Za-z0-9\s_]+$/;
+            return addressRegex.test(input.value) ? "" : "Invalid address format";
+        }
+
+        validateAlphabet(input) {
+            const alphabetRegex = /^[A-Za-z]+$/;
+            return alphabetRegex.test(input.value) ? "" : "Only alphabet allowed";
+        }
+
+        validatePostalCode(input) {
+            const postalCodeRegex = /^[0-9]{5,10}$/;
+            return postalCodeRegex.test(input.value) ? "" : "Only numbers allowed";
+        }
+
+        validateInput(input) {
+            let errorMessage = "";
+            Object.keys(this.validationRules).forEach((rule) => {
+                if (input.classList.contains(rule)) {
+                    let error = this.validationRules[rule](input);
+                    if (error) errorMessage = error;
+                }
+            });
+
+            this.showError(input, errorMessage);
+            return errorMessage === "";
+        }
+
+        setupFormSubmission() {
+            this.form.addEventListener("submit", (event) => {
+                let isValid = true;
+                const allInputs = this.form.querySelectorAll("input.required, select.required");
+
+                console.log(allInputs);
+                allInputs.forEach((input) => {
+                    if (!this.validateInput(input)) {
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+        }
+
+        showError(input, message) {
+            let errorDiv = input.nextElementSibling;
+            console.log(errorDiv);
+            if (!errorDiv || !errorDiv.classList.contains("error-message")) {
+                errorDiv = document.createElement("div");
+                errorDiv.classList.add("error-message", "text-danger", "mt-1");
+                input.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = message;
+        }
+
+        observeInputs() {
+            document.addEventListener("input", (event) => {
+                if (event.target.tagName === "INPUT" || event.target.tagName === "SELECT") {
+                    this.validateInput(event.target);
+                }
+            });
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("form.triger_on_submit").forEach((form) => {
+            console.log(form);
+            new FormValidator(form);
+        });
+    });
+</script>

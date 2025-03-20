@@ -55,7 +55,7 @@ class Catalog_Block_Product_List extends Core_Block_Template
     public function getCategories()
     {
         $data = Mage::getModel('catalog/category')->getCollection()
-            ->addFieldToFilter('parent_id', 1)
+            // ->addFieldToFilter('parent_id', 1)
             ->getData();
         return $data;
     }
@@ -69,7 +69,8 @@ class Catalog_Block_Product_List extends Core_Block_Template
         $attribute = Mage::getModel("catalog/product_attribute")->getCollection()
             ->addFieldToFilter('attribute_id', $id)
             ->getData();
-        return $attribute;
+
+        return $this->uniquevalues($attribute);
     }
     public function listAjaxAction()
     {
@@ -104,6 +105,18 @@ class Catalog_Block_Product_List extends Core_Block_Template
             ];
             echo json_encode($errorResponse);
         }
+    }
+    public function uniqueValues($data)
+    {
+        $newdata = [];
+        foreach ($data as $values) {
+
+            if (!empty($values->getValue())) {
+                $newdata[] = $values->getValue();
+            }
+        }
+
+        return array_values(array_unique($newdata));
     }
 }
 ?>

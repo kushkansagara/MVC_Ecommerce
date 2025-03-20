@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc3dc;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-color: #dee2e6;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f7fa;
+            padding: 20px;
+        } */
+
+        .registration-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .form-header p {
+            opacity: 0.8;
+        }
+
+        .form-body {
+            padding: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            font-size: 20px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section-title i {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-control-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(79, 195, 220, 0.2);
+            outline: none;
+        }
+
+        .form-control.invalid {
+            border-color: var(--error-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-footer {
+            background-color: var(--light-color);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 12px 30px;
+            font-size: 16px;
+            line-height: 1.5;
+            border-radius: 5px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            color: white;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 12px;
+            cursor: pointer;
+            color: var(--dark-color);
+            opacity: 0.6;
+        }
+
+        .hint {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .login-link {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            color: #666666;
+        }
+
+        .login-link a {
+            color: #6064EC;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .login-link a:hover {
+            color: #4e52d6;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .form-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="registration-container">
+        <div class="form-header">
+            <h1>Create Your Account</h1>
+            <p>Please fill in the information below to register</p>
+        </div>
+
+        <?php echo $this->getHtml('formStart', [
+            'method' => 'POST',
+            'action' => $this->getUrl('*/*/save'),
+            'id' => 'customer-registration-form',
+            'class' => 'registration-form'
+        ]); ?>
+
+        <div class="form-body">
+            <!-- Personal Information Section -->
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-user"></i> Personal Information
+                </h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'first_name',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('text', [
+                            'id' => 'first_name',
+                            'name' => "customer_account[first_name]",
+                            'class' => 'form-control required validate-alphabet',
+                            'placeholder' => 'Enter your first name'
+                        ]); ?>
+                    </div>
+
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'last_name',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('text', [
+                            'id' => 'last_name',
+                            'name' => "customer_account[last_name]",
+                            'class' => 'form-control required validate-alphabet',
+                            'placeholder' => 'Enter your last name'
+                        ]); ?>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'email',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('email', [
+                            'id' => 'email',
+                            'name' => "customer_account[email]",
+                            'class' => 'form-control required validate-email',
+                            'placeholder' => 'Enter your email address'
+                        ]); ?>
+                    </div>
+
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'phone_number',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('phone', [
+                            'id' => 'phone_number',
+                            'name' => "customer_account[phone_number]",
+                            'class' => 'form-control required validate-phonenumber',
+                            'placeholder' => 'Enter your phone number'
+                        ]); ?>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'date_of_birth',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('date', [
+                            'id' => 'date_of_birth',
+                            'name' => "customer_account[date_of_birth]",
+                            'class' => 'form-control required',
+                            'max' => date('Y-m-d')
+                        ]); ?>
+                    </div>
+
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'gender',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('radio', [
+                            'id' => 'gender',
+                            'name' => "customer_account[gender]",
+                            'class' => 'required',
+                            'options' => [
+                                'Male' => 'Male',
+                                'Female' => 'Female',
+                                'Other' => 'Other'
+                            ]
+                        ]); ?>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'password',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <div class="password-container">
+                            <?php echo $this->getHtml('password', [
+                                'id' => 'password',
+                                'name' => "customer_account[password_hash]",
+                                'class' => 'form-control required validate-password',
+                                'placeholder' => 'Create a password'
+                            ]); ?>
+                            <span class="password-toggle" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                        <div class="hint">Password must be at least 8 characters with letters, numbers and special
+                            characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'confirm_password',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <div class="password-container">
+                            <?php echo $this->getHtml('password', [
+                                'id' => 'confirm_password',
+                                'name' => "confirm_password",
+                                'class' => 'form-control required validate-confirm-password',
+                                'placeholder' => 'Confirm your password'
+                            ]); ?>
+                            <span class="password-toggle" id="toggleConfirmPassword">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="form-section-title">
+                    <i class="fas fa-map-marker-alt"></i> Address Information
+                </h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'street_address',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('text', [
+                            'id' => 'street_address',
+                            'name' => "customer_account[street_address]",
+                            'class' => 'form-control required validate-address',
+                            'placeholder' => 'Enter your street address'
+                        ]); ?>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'city',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('text', [
+                            'id' => 'city',
+                            'name' => "customer_account[city]",
+                            'class' => 'form-control required validate-alphabet',
+                            'placeholder' => 'Enter your city'
+                        ]); ?>
+                    </div>
+
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'zipcode',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('text', [
+                            'id' => 'zipcode',
+                            'name' => "customer_account[zipcode]",
+                            'class' => 'form-control required validate-postalcode',
+                            'placeholder' => 'Enter your postal/zip code'
+                        ]); ?>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'state',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('text', [
+                            'id' => 'state',
+                            'name' => "customer_account[state]",
+                            'class' => 'form-control required validate-alphabet',
+                            'placeholder' => 'Enter your state/province'
+                        ]); ?>
+                    </div>
+
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'region',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('text', [
+                            'id' => 'region',
+                            'name' => "customer_account[region]",
+                            'class' => 'form-control validate-alphabet',
+                            'placeholder' => 'Enter your region (optional)'
+                        ]); ?>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <?php echo $this->getHtml('label', [
+                            'for' => 'country',
+                            'class' => 'form-control-label'
+                        ]); ?>
+                        <?php echo $this->getHtml('dropdown', [
+                            'id' => 'country',
+                            'name' => "customer_account[country]",
+                            'class' => 'form-control required',
+                            'options' => [
+                                '' => 'Select Country',
+                                'India' => 'India',
+                                'United States' => 'United States',
+                                'Canada' => 'Canada',
+                                'United Kingdom' => 'United Kingdom',
+                                'Australia' => 'Australia',
+                                'Germany' => 'Germany',
+                                'France' => 'France',
+                                'Japan' => 'Japan',
+                                'China' => 'China'
+                            ]
+                        ]); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <?php echo $this->getHtml('submit', [
+                'type' => 'submit',
+                'class' => 'btn btn-primary',
+                'text' => 'Create Account',
+                'id' => 'submit-registration'
+            ]); ?>
+        </div>
+
+        <?php echo $this->getHtml('formend', []); ?>
+    </div>
+    <div class="login-link">
+        Already Account? <a href="<?php echo $this->getUrl('*/*/login') ?>">Sign up</a>
+    </div>
+
+    <script>
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     class FormValidator {
+        //         constructor() {
+        //             this.validationRules = {
+        //                 "required": this.validateRequired,
+        //                 "validate-email": this.validateEmail,
+        //                 "validate-alphabet": this.validateAlphabet,
+        //                 "validate-phonenumber": this.validatePhoneNumber,
+        //                 "validate-address": this.validateAddress,
+        //                 "validate-postalcode": this.validatePostalCode,
+        //                 "validate-password": this.validatePassword,
+        //                 "validate-confirm-password": this.validateConfirmPassword
+        //             };
+        //             this.setupPasswordToggles();
+        //             this.observeInputs();
+        //             this.setupFormSubmit();
+        //         }
+
+        //         validateRequired(input) {
+        //             return input.value.trim() ? "" : "This field is required";
+        //         }
+
+        //         validateEmail(input) {
+        //             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        //             return emailRegex.test(input.value) ? "" : "Please enter a valid email address";
+        //         }
+
+        //         validatePhoneNumber(input) {
+        //             const phoneRegex = /^\+?[0-9]{6,15}$/;
+        //             return phoneRegex.test(input.value) ? "" : "Please enter a valid phone number";
+        //         }
+
+        //         validateAddress(input) {
+        //             const addressRegex = /^[A-Za-z0-9\s,.#-_/]+$/;
+        //             return addressRegex.test(input.value) ? "" : "Please enter a valid address";
+        //         }
+
+        //         validateAlphabet(input) {
+        //             const nameRegex = /^[A-Za-z\s]+$/;
+        //             return nameRegex.test(input.value) ? "" : "Only alphabetic characters allowed";
+        //         }
+
+        //         validatePostalCode(input) {
+        //             const postalCodeRegex = /^\d{5,10}$/;
+        //             return postalCodeRegex.test(input.value) ? "" : "Please enter a valid postal code";
+        //         }
+
+        //         validatePassword(input) {
+        //             const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+        //             return passwordRegex.test(input.value) ? "" :
+        //                 "Password must be at least 8 characters with letters, numbers and special characters";
+        //         }
+
+        //         validateConfirmPassword(input) {
+        //             const password = document.getElementById('password').value;
+        //             return input.value === password ? "" : "Passwords do not match";
+        //         }
+
+        //         // Validate a single input
+        //         validateInput(input) {
+        //             let errorMessage = "";
+
+        //             // First check if it's required
+        //             if (input.classList.contains("required") && !input.value.trim()) {
+        //                 errorMessage = "This field is required";
+        //             } else {
+        //                 // Then check other validation rules
+        //                 for (const rule in this.validationRules) {
+        //                     if (input.classList.contains(rule) && input.value.trim()) {
+        //                         const error = this.validationRules[rule](input);
+        //                         if (error) {
+        //                             errorMessage = error;
+        //                             break;
+        //                         }
+        //                     }
+        //                 }
+        //             }
+
+        //             this.showError(input, errorMessage);
+        //             return errorMessage === "";
+        //         }
+
+        //         // Show error message
+        //         showError(input, message) {
+        //             let errorDiv = input.nextElementSibling;
+
+        //             if (!errorDiv || !errorDiv.classList.contains("error-message")) {
+        //                 errorDiv = document.createElement("div");
+        //                 errorDiv.classList.add("error-message");
+
+        //                 // Handle the password toggle button case
+        //                 if (input.parentNode.classList.contains('password-container')) {
+        //                     input.parentNode.insertAdjacentElement('afterend', errorDiv);
+        //                 } else {
+        //                     input.insertAdjacentElement('afterend', errorDiv);
+        //                 }
+        //             }
+
+        //             errorDiv.textContent = message;
+
+        //             if (message) {
+        //                 input.classList.add("invalid");
+        //             } else {
+        //                 input.classList.remove("invalid");
+        //             }
+        //         }
+
+        //         // Setup password toggle functionality
+        //         setupPasswordToggles() {
+        //             const togglePassword = document.getElementById('togglePassword');
+        //             const password = document.getElementById('password');
+        //             const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+        //             const confirmPassword = document.getElementById('confirm_password');
+
+        //             if (togglePassword && password) {
+        //                 togglePassword.addEventListener('click', function () {
+        //                     const type = password.getAttribute('type') === 'password' ? 'text' :
+        //                         'password';
+        //                     password.setAttribute('type', type);
+        //                     this.querySelector('i').classList.toggle('fa-eye');
+        //                     this.querySelector('i').classList.toggle('fa-eye-slash');
+        //                 });
+        //             }
+
+        //             if (toggleConfirmPassword && confirmPassword) {
+        //                 toggleConfirmPassword.addEventListener('click', function () {
+        //                     const type = confirmPassword.getAttribute('type') === 'password' ? 'text' :
+        //                         'password';
+        //                     confirmPassword.setAttribute('type', type);
+        //                     this.querySelector('i').classList.toggle('fa-eye');
+        //                     this.querySelector('i').classList.toggle('fa-eye-slash');
+        //                 });
+        //             }
+        //         }
+
+        //         // Observe inputs for validation
+        //         observeInputs() {
+        //             const inputs = document.querySelectorAll('input, select, textarea');
+        //             inputs.forEach(input => {
+        //                 input.addEventListener('blur', () => {
+        //                     this.validateInput(input);
+        //                 });
+
+        //                 input.addEventListener('input', () => {
+        //                     if (input.classList.contains('invalid')) {
+        //                         this.validateInput(input);
+        //                     }
+
+        //                     // Special case for confirm password
+        //                     if (input.id === 'password' && document.getElementById(
+        //                         'confirm_password').value) {
+        //                         this.validateInput(document.getElementById('confirm_password'));
+        //                     }
+        //                 });
+        //             });
+        //         }
+
+        //         // Setup form submission
+        //         setupFormSubmit() {
+        //             const form = document.getElementById('customer-registration-form');
+
+        //             if (form) {
+        //                 form.addEventListener('submit', (event) => {
+        //                     const inputs = form.querySelectorAll(
+        //                         '.required, .validate-email, .validate-password, .validate-confirm-password'
+        //                     );
+        //                     let isValid = true;
+
+        //                     inputs.forEach(input => {
+        //                         if (!this.validateInput(input)) {
+        //                             isValid = false;
+        //                         }
+        //                     });
+
+        //                     if (!isValid) {
+        //                         event.preventDefault();
+        //                         // Scroll to the first error
+        //                         const firstError = form.querySelector('.invalid');
+        //                         if (firstError) {
+        //                             firstError.scrollIntoView({
+        //                                 behavior: 'smooth',
+        //                                 block: 'center'
+        //                             });
+        //                             firstError.focus();
+        //                         }
+        //                     }
+        //                 });
+        //             }
+        //         }
+        //     }
+
+        //     new FormValidator();
+        // });
+        // togglePassword.addEventListener('click', function () {
+        //     const type = password.type === 'password' ? 'text' : 'password';
+        //     password.type = type;
+        //     this.setAttribute("title", type === "password" ? "Show Password" : "Hide Password");
+        // });
+    </script>
+</body>
+
+</html>

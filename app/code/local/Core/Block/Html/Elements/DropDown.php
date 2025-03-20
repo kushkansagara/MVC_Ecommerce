@@ -20,43 +20,27 @@ class Core_Block_Html_Elements_DropDown
             $html .= sprintf("name='%s' ", htmlspecialchars($this->_data['name']));
         }
         if (isset($this->_data['class'])) {
-            $html .= sprintf(" class='%s'", $this->_data['class']);
+            $html .= sprintf(" class='%s' ", htmlspecialchars($this->_data['class']));
         }
         $html .= ">";
-        $html .= "<option value='0'>Select Category</option>";
 
-        $nameCount = [];
-        $privateId = null;
+        // Default option
+        $html .= "<option value=''>Select</option>";
 
-        if (isset($this->_data['value']) && is_array($this->_data['value'])) {
-            foreach ($this->_data['value'] as $cat) {
-                if (is_object($cat)) {
-                    $id = $cat->getCategoryId();
-                    $name = $cat->getName();
-
-                    $nameCount[$name] = ($nameCount[$name] ?? 0) + 1;
-
-                    if ($nameCount[$name] > 1) {
-                        $privateId = $id;
-                    }
-                    $selected = (isset($this->_data['checked']) && (int) $this->_data['checked'] === (int) $id) ? "selected" : "";
-
-                    $html .= sprintf(
-                        "<option value='%s' %s>%s</option>",
-                        htmlspecialchars($id),
-                        $selected,
-                        htmlspecialchars($name)
-                    );
-                }
+        // Handling key-value pair options
+        if (isset($this->_data['options']) && is_array($this->_data['options'])) {
+            foreach ($this->_data['options'] as $key => $value) {
+                $selected = (isset($this->_data['checked']) && $this->_data['checked'] == $key) ? "selected" : "";
+                $html .= sprintf(
+                    "<option value='%s' %s>%s</option>",
+                    htmlspecialchars($key),
+                    $selected,
+                    htmlspecialchars($value)
+                );
             }
-
         }
 
         $html .= "</select>";
-        if ($privateId !== null) {
-            $html .= sprintf("<input type='hidden' name='private_id' value='%s'>", htmlspecialchars($privateId));
-        }
-
         return $html;
     }
 }

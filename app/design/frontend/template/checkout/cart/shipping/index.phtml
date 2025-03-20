@@ -1,9 +1,8 @@
-<?php
-$allShiping = $this->getAllShipping();
-$cartData = $this->getCartData();
-$cartSubtotal = $this->getCartItemData();
-
-?>
+<?php $allShiping=$this->getAllShipping();
+    $cartData = $this->getCartData();
+    $cartSubtotal = $this->getCartItemData();
+    $allPayment= $this->getAllPayment();
+    ?>
 <div class="checkout-container">
     <div class="shipping-payment-row">
         <div class="shipping-container">
@@ -30,60 +29,54 @@ $cartSubtotal = $this->getCartItemData();
                     </div>
                     <input type="hidden" id="shipping_price" name="shipping_price" value="">
                 </div>
+                <span id="errorshipping" class="err-span"></span>
             </form>
         </div>
 
         <div class="payment-container">
-
             <h2 class="section-title">Payment Method</h2>
+            <form id="paymentForm" action="<?php echo $this->getUrl('*/cart_payment/payment') ?>" method="post">
+                <div class="shipping-payment-container">
+                    <div class="radio-group">
+                        <?php foreach ($allPayment as $payment): ?>
+                        <div
+                            class="radio-option <?php echo (ucfirst($cartData->getPaymentMethod()) === ucfirst($payment)) ? 'selected' : '' ?>">
+                            <input type="radio" id="payment-<?php echo $payment ?>" name="payment_method"
+                                value="<?php echo ucfirst($payment)?>" class="radio-input"
+                                <?php echo (ucfirst($cartData->getPaymentMethod()) === ucfirst($payment)) ? 'checked' : '' ?>
+                                onchange="UpdatePayment()">
 
-            <div class="radio-group">
-                <div class="radio-option selected" onclick="selectPayment('credit_card')">
-                    <input type="radio" id="payment-credit-card" name="payment_method" value="credit_card"
-                        class="radio-input" checked>
-                    <div class="radio-label">
-                        <div class="radio-label-title">Credit Card</div>
-                        <div class="radio-label-desc">Pay securely with your credit card</div>
-                        <div class="payment-logos">
-                            <i class="fab fa-cc-visa fa-2x payment-logo"></i>
-                            <i class="fab fa-cc-mastercard fa-2x payment-logo"></i>
-                            <i class="fab fa-cc-amex fa-2x payment-logo"></i>
+                            <div class="radio-label">
+                                <div class="radio-label-title"><?php echo ucfirst($payment) ?></div>
+                                <div class="radio-label-desc">Pay with cash upon delivery (additional ₹40 fee applies)
+                                </div>
+                            </div>
                         </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
+                <span id="errorpayment" class="err-span"></span>
+            </form>
 
-                <div class="radio-option" onclick="selectPayment('paypal')">
-                    <input type="radio" id="payment-paypal" name="payment_method" value="paypal" class="radio-input">
-                    <div class="radio-label">
-                        <div class="radio-label-title">PayPal</div>
-                        <div class="radio-label-desc">Pay via PayPal; you can pay with your credit card if you
-                            don't have a PayPal account</div>
-                        <div class="payment-logos">
-                            <i class="fab fa-paypal fa-2x payment-logo"></i>
+            <!-- <div class="radio-option" onclick="selectPayment('upi')">
+                        <input type="radio" id="payment-upi" name="payment_method" value="upi" class="radio-input">
+                        <div class="radio-label">
+                            <div class="radio-label-title">UPI</div>
+                            <div class="radio-label-desc">Pay using UPI apps like Google Pay, PhonePe, Paytm</div>
+                            <div class="payment-logos">
+                                <i class="fas fa-mobile-alt fa-2x payment-logo"></i>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </div> -->
 
-                <div class="radio-option" onclick="selectPayment('upi')">
-                    <input type="radio" id="payment-upi" name="payment_method" value="upi" class="radio-input">
-                    <div class="radio-label">
-                        <div class="radio-label-title">UPI</div>
-                        <div class="radio-label-desc">Pay using UPI apps like Google Pay, PhonePe, Paytm</div>
-                        <div class="payment-logos">
-                            <i class="fas fa-mobile-alt fa-2x payment-logo"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="radio-option" onclick="selectPayment('cod')">
+            <!-- <div class="radio-option" onclick="selectPayment('cod')">
                     <input type="radio" id="payment-cod" name="payment_method" value="cod" class="radio-input">
                     <div class="radio-label">
                         <div class="radio-label-title">Cash on Delivery</div>
                         <div class="radio-label-desc">Pay with cash upon delivery (additional ₹40 fee applies)
                         </div>
                     </div>
-                </div>
-            </div>
+                </div> -->
         </div>
     </div>
     <div class="coupon-container">
@@ -144,3 +137,47 @@ $cartSubtotal = $this->getCartItemData();
         </div>
     </div>
 </div>
+<div class="place-order-container">
+    <a onclick="return valid()" href="<?php echo $this->getUrl('*/cart_order/placeOrder') ?>" id="place-order-btn"
+        class="place-order-button">
+        <i class="fas fa-shopping-cart"></i> Place Order
+    </a>
+</div>
+
+<script>
+function valid() {
+    let valid = true;
+
+    let shippingMethods = document.getElementsByName("shipping_method");
+    let shippingSelected = false;
+    document.querySelectorAll(".err-span").forEach(span => span.innerText = "");
+
+    for (let i = 0; i < shippingMethods.length; i++) {
+        if (shippingMethods[i].checked) {
+            shippingSelected = true;
+            break;
+        }
+    }
+
+    if (!shippingSelected) {
+        document.getElementById("errorshipping").innerText = "Please select one shipping Method";
+        isValid = false;
+    }
+
+
+    let payment = document.getElementsByName('payment_method');
+    let paymentSelect = false;
+
+    for (let i = 0; i < payment.length; i++) {
+        if (payment[i].checked) {
+            paymentSelect = true;
+            break;
+        }
+    }
+    if (!paymentSelect) {
+        document.getElementById("errorpayment").innerText = "Please select one Payment Method";
+        isValid = false;
+    }
+    return isValid;
+}
+</script>

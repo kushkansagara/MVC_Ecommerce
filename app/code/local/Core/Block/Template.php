@@ -3,6 +3,7 @@
 class Core_Block_Template
 {
     protected $_child = [];
+    protected $_parent = null;
     protected $_template;
     public function toHtml()
     {
@@ -10,11 +11,22 @@ class Core_Block_Template
     }
     public function addChild($key, $block)
     {
+        $block->setParent($this);
         $this->_child[$key] = $block;
-        // ;
-        // print_r($this->_child);
+
         return $this;
     }
+
+    public function setParent($a)
+    {
+        $this->_parent = $a;
+        return $this;
+    }
+    public function getParent()
+    {
+        return $this->_parent;
+    }
+
     public function removeChild($key)
     {
         if (isset($this->_child[$key])) {

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left: 4px solid #ffffff;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .menu-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-header {
+            height: 70px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .new-order-btn {
+            background-color: #4b6cb7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(75, 108, 183, 0.3);
+        }
+
+        .new-order-btn:hover {
+            background-color: #3f5ca0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(75, 108, 183, 0.4);
+        }
+
+        .content-area {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        /* Dashboard Specific Styles */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-title {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            gap: 4px;
+        }
+
+        .stat-increase {
+            color: #4caf50;
+        }
+
+        .stat-decrease {
+            color: #f44336;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chart-filter {
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .sales-chart {
+            height: 300px;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .chart-placeholder {
+            background-color: #f5f5f7;
+            height: 100%;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-placeholder::before {
+            content: "";
+            position: absolute;
+            background: linear-gradient(90deg, rgba(75, 108, 183, 0.5) 25%, rgba(75, 108, 183, 0.3) 50%, rgba(75, 108, 183, 0.5) 75%);
+            height: 60%;
+            bottom: 0;
+            width: 100%;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 200'%3E%3Cpath d='M0,200 L50,190 L100,180 L150,170 L200,155 L250,190 L300,170 L350,175 L400,140 L450,150 L500,120 L550,100 L600,130 L650,110 L700,90 L750,80 L800,70 L850,90 L900,60 L950,65 L1000,50 L1050,40 L1100,30 L1150,20 L1200,10 L1200,200 L0,200 Z' fill='%234b6cb7'/%3E%3C/svg%3E");
+        }
+
+        .pie-chart {
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pie-placeholder {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background-image: conic-gradient(#4b6cb7 0% 30%, #43cea2 30% 55%, #ffc107 55% 70%, #ff9800 70% 85%, #f44336 85% 100%);
+        }
+
+        .recent-orders {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .orders-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .view-all {
+            color: #4b6cb7;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .view-all:hover {
+            color: #3f5ca0;
+            text-decoration: underline;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+
+        .orders-table td {
+            padding: 16px;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-id {
+            font-weight: 500;
+            color: #4b6cb7;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+
+        .status-processing {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-pending {
+            background-color: rgba(75, 108, 183, 0.1);
+            color: #4b6cb7;
+        }
+
+        /* Icons */
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- <header class="top-header">
+            <h1 class="page-title">Dashboard</h1>
+            
+            <div class="header-actions">
+                <button class="new-order-btn">
+                    <span>+</span>
+                    <span>New Order</span>
+                </button>
+            </div>
+        </header> -->
+        <h1 class="page-title">Dashboard</h1>
+
+        <div class="content-area">
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-title">Total Sales</div>
+                    <div class="stat-value">$24,780</div>
+                    <div class="stat-change stat-increase">
+                        <span>↑</span>
+                        <span>12.5% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">Orders</div>
+                    <div class="stat-value">1,482</div>
+                    <div class="stat-change stat-increase">
+                        <span>↑</span>
+                        <span>8.2% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">Customers</div>
+                    <div class="stat-value">768</div>
+                    <div class="stat-change stat-increase">
+                        <span>↑</span>
+                        <span>5.3% from last month</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-title">Avg. Order Value</div>
+                    <div class="stat-value">$165.42</div>
+                    <div class="stat-change stat-decrease">
+                        <span>↓</span>
+                        <span>2.1% from last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Sales Analytics</div>
+                        <div class="chart-actions">
+                            <select class="chart-filter">
+                                <option>Last 7 Days</option>
+                                <option>Last 30 Days</option>
+                                <option>Last 3 Months</option>
+                                <option>Last Year</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="sales-chart">
+                        <div class="chart-placeholder"></div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Sales by Category</div>
+                    </div>
+
+                    <div class="pie-chart">
+                        <div class="pie-placeholder"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="recent-orders">
+                <div class="orders-header">
+                    <div class="orders-title">Recent Orders</div>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="order-id">#ORD-7652</td>
+                            <td>John Smith</td>
+                            <td>Mar 18, 2025</td>
+                            <td>$352.22</td>
+                            <td><span class="status-badge status-completed">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#ORD-7651</td>
+                            <td>Emma Johnson</td>
+                            <td>Mar 18, 2025</td>
+                            <td>$125.95</td>
+                            <td><span class="status-badge status-processing">Processing</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#ORD-7650</td>
+                            <td>Michael Brown</td>
+                            <td>Mar 17, 2025</td>
+                            <td>$458.80</td>
+                            <td><span class="status-badge status-completed">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#ORD-7649</td>
+                            <td>Sarah Davis</td>
+                            <td>Mar 17, 2025</td>
+                            <td>$219.50</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#ORD-7648</td>
+                            <td>James Wilson</td>
+                            <td>Mar 16, 2025</td>
+                            <td>$185.90</td>
+                            <td><span class="status-badge status-completed">Completed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

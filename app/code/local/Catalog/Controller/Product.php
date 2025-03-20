@@ -18,7 +18,8 @@ class Catalog_Controller_Product
         $list = $layout->createBlock('Catalog/Product_List')
             ->setTemplate('catalog/product/list.phtml');
         $layout->getChild('content')->addChild('list', $list);
-        $layout->getChild('head')->addCss('catalog/product/list.css')->addJs('catalog/product/list/filter.js');
+        $layout->getChild('head')->addCss('catalog/product/list.css');
+        // ->addJs('catalog/product/list/filter.js');
         $layout->toHtml();
     }
 

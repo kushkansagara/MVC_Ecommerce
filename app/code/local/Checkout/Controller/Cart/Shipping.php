@@ -19,7 +19,6 @@ class Checkout_Controller_Cart_Shipping extends Core_Controller_Front_Action
             ->setTemplate('checkout/cart/shipping/index.phtml');
         $layout->getChild('content')->addChild('index', $index);
         $layout->getChild('head')->addCss('main.css')->addCss('checkout/cart/shipping/index.css')->addJs('checkout/cart/shipping/index.js');
-
         $layout->toHtml();
     }
     public function applyCouponAction()

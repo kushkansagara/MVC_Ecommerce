@@ -376,3 +376,54 @@
      margin: 10px 0;
      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
  }
+
+ .place-order-container {
+    max-width: 1200px;
+        margin: 0 auto;
+     margin-top: 20px;
+     text-align: center;
+ }
+
+ .place-order-button {
+     background-color: #4CAF50;
+     color: white;
+     border: none;
+     border-radius: 4px;
+     padding: 12px 24px;
+     font-size: 16px;
+     font-weight: bold;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+     width: 100%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 8px;
+ }
+
+ .place-order-button:hover {
+     background-color: #45a049;
+     transform: translateY(-2px);
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+ }
+
+ .place-order-button:active {
+     transform: translateY(0);
+     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+ }
+
+ .place-order-button i {
+     margin-right: 5px;
+ }
+
+ @media (max-width: 768px) {
+     .place-order-button {
+         padding: 10px 20px;
+         font-size: 14px;
+     }
+ }
+ .err-span{
+    color: red;
+    size: 14px;
+ }

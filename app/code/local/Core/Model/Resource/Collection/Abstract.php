@@ -57,7 +57,7 @@ class core_Model_Resource_Collection_Abstract
 
     public function prepareQuery()
     {
-        $query = sprintf("SELECT %s FROM %s AS %s", implode(',', $this->_select['COLUMNS']), array_values($this->_select['FROM'])[0], array_keys($this->_select['FROM'])[0]);
+        $query = sprintf("SELECT %s FROM `%s` AS %s", implode(',', $this->_select['COLUMNS']), array_values($this->_select['FROM'])[0], array_keys($this->_select['FROM'])[0]);
         if (isset($this->_select['JOIN_LEFT'])) {
             $leftjoinsql = "";
             foreach ($this->_select["JOIN_LEFT"] as $joinLeft) {
@@ -255,17 +255,7 @@ class core_Model_Resource_Collection_Abstract
         return $this;
     }
 
-    // public function groupBy($columns)
-    // {
-    //     $this->_select["GROUPBY"][] = ['columns' => $columns];
 
-    //     foreach ($columns as $columnName) {
-    //         $this->_select['GROUPBY'][] = sprintf("%s", $columnName);
-    //     }
-    //     ;
-    //     print_r($this);
-    //     return $this;
-    // }
 
     public function groupBy($columns)
     {
@@ -273,7 +263,6 @@ class core_Model_Resource_Collection_Abstract
             $this->_select['GROUPBY'][] = sprintf("%s", $columnName);
         }
         ;
-        // print_r($this);
         return $this;
     }
     public function orderBy($columns)
@@ -282,7 +271,6 @@ class core_Model_Resource_Collection_Abstract
             $this->_select['ORDERBY'][] = sprintf("%s", $columnName);
         }
         ;
-        // print_r($this);
         return $this;
     }
     public function having($field, $condition)

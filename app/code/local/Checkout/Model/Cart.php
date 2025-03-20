@@ -23,9 +23,10 @@ class Checkout_Model_Cart extends Core_Model_Abstract
         foreach ($oldData as $old) {
             $total += $old->getSubtotal();
         }
-        $total = $total - (int) $this->getCouponDiscount() + (int) $this->getShippingPrice();
         $discount = Mage::getModel('checkout/coupon')->calculateDiscount($this->getCouponCode(), $total);
         $this->setCouponDiscount($discount);
+
+        $total = $total - (int) $this->getCouponDiscount() + (int) $this->getShippingPrice();
         $this->setTotalAmount($total);
     }
 
@@ -59,5 +60,24 @@ class Checkout_Model_Cart extends Core_Model_Abstract
         return $this;
 
     }
+    public function getAddressCollection()
+    {
+        return Mage::getModel('checkout/Cart_Address')->getCollection()
+            ->addFieldToFilter('cart_id', $this->getCartId());
+    }
+
+    public function getBillingAddress()
+    {
+        return $this->getAddressCollection()
+            ->addFieldToFilter('address_type', 'Billing')
+            ->getFirstItem();
+    }
+    public function getShippingAddress()
+    {
+        return $this->getAddressCollection()
+            ->addFieldToFilter('address_type', 'Shipping')
+            ->getFirstItem();
+    }
 }
+
 ?>

@@ -1,0 +1,12 @@
+<?php $order_items = $this->getItem()->getData() ?>
+
+
+
+<?php foreach ($order_items as $order): ?>
+    <ul>
+        <li>
+            <?php echo $this->getProductName($order->getProductId())->getFirstItem()->getName(); ?> -
+            <?php echo $order->getPrice() ?> x <?php echo $order->getProductQuantity() ?>
+        </li>
+    </ul>
+<?php endforeach; ?>

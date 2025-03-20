@@ -313,7 +313,6 @@ function generateCategoryMenu($categories, $parentId = 1)
 }
 ?>
 
-
 <body class="headerBody">
     <header class="navbar">
         <div class="container navbar-container">
@@ -336,7 +335,7 @@ function generateCategoryMenu($categories, $parentId = 1)
             </ul>
 
             <div class="navbar-actions">
-                <a href="#" class="navbar-link">Login</a>
+                <a href="<?php $this->getUrl('customer/account/login') ?>" class="navbar-link">Login</a>
                 <a href="<?php echo $this->getUrl('checkout/cart/index') ?>" class="cart-icon">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count"><?php echo $items ?></span>

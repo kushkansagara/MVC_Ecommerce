@@ -15,5 +15,10 @@ class Core_Controller_Front_Action
         header('Location:' . Mage::getBaseUrl() . $url);
         return $this;
     }
+
+    // public function getLayout()
+    // {
+    //     return Mage::getBlock('Core/Layout');
+    // }
 }
 ?>
