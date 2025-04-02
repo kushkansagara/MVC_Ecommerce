@@ -6,4 +6,10 @@ class Admin_Model_User extends Core_Model_Abstract
         $this->_resourceClassName = "Admin_Model_Resource_User";
         $this->_collectionClassName = "Admin_Model_Resource_User_Collection";
     }
+
+    //$menu/productlist am pass karvanu
+    public function isAllowed()
+    {
+
+    }
 }

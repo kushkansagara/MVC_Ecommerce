@@ -283,14 +283,12 @@ function generateCategoryMenu($categories, $parentId = 1)
     foreach ($categories as $category) {
         if ($category->getParentId() == $parentId) {
             $baserl = Mage::getBaseUrl();
-            $jsonData = json_encode(['category' => [$category->getCategoryId()]]);
-            $encodedData = base64_encode($jsonData);
 
             $subMenu = generateCategoryMenu($categories, $category->getCategoryId());
             $hasChildren = !empty($subMenu);
 
             $html .= '<li class="nav-item' . ($hasChildren ? ' dropdown' : '') . '">';
-            $html .= '<a class="nav-link' . ($hasChildren ? ' dropdown-toggle' : '') . '" href="' . $baserl . 'catalog/product/list/?data=' . $encodedData . '">';
+            $html .= '<a class="nav-link' . ($hasChildren ? ' dropdown-toggle' : '') . '" href="' . $baserl . 'catalog/product/list/?category=' . $category->getCategoryId() . '">';
             $html .= htmlspecialchars($category->getName());
 
             if ($hasChildren) {
@@ -315,11 +313,11 @@ function generateCategoryMenu($categories, $parentId = 1)
 
 <body class="headerBody">
     <header class="navbar">
-        <div class="container navbar-container">
+        <div class="navbar-container">
             <a href="#" class="navbar-logo">MyStore</a>
             <ul class="navbar-menu" id="navbarMenu">
                 <li class="navbar-item">
-                    <a href="#" class="navbar-link">Home</a>
+                    <a href="<?php echo Mage::getBaseUrl(); ?>" class="navbar-link">Home</a>
                 </li>
                 <?php foreach ($MainSubcategory as $Maincategory): ?>
                     <li class="nav-item dropdown">
@@ -335,7 +333,11 @@ function generateCategoryMenu($categories, $parentId = 1)
             </ul>
 
             <div class="navbar-actions">
-                <a href="<?php $this->getUrl('customer/account/login') ?>" class="navbar-link">Login</a>
+                <?php if (isset($_SESSION['customer_id'])): ?>
+                    <a href="<?php echo $this->getUrl('customer/account/dashboard') ?>" class="navbar-link">My Account</a>
+                <?php else: ?>
+                    <a href="<?php echo $this->getUrl('customer/account/login') ?>" class="navbar-link">Login</a>
+                <?php endif; ?>
                 <a href="<?php echo $this->getUrl('checkout/cart/index') ?>" class="cart-icon">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count"><?php echo $items ?></span>

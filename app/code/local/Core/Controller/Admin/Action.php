@@ -1,8 +1,9 @@
 <?php
 
-class core_Controller_Admin_Action extends Core_Controller_Front_Action
+class Core_Controller_Admin_Action extends Core_Controller_Front_Action
 {
     protected $_allowedActions = [];
+    protected $_roleAllowedAction = [];
 
     public function __construct()
     {
@@ -13,8 +14,14 @@ class core_Controller_Admin_Action extends Core_Controller_Front_Action
 
         $isLogin = $this->getSession()->get('login');
         if (!in_array($this->getRequest()->getActionName(), $this->_allowedActions)) {
-            if ($isLogin === 1) {
+            // echo $isLogin;
+            if ($isLogin != 0) {
 
+                $admin = Mage::getModel('Admin/User')->load($isLogin);
+                $role_id = $admin->getRoleId();
+                $this->getSession()->set('role_id', $role_id);
+                $role = Mage::getModel('Admin/Role')->load($role_id);
+                $this->_roleAllowedAction = $role->getPermissions();
             } else {
                 $this->redirect('admin/account/login');
             }
@@ -23,7 +30,7 @@ class core_Controller_Admin_Action extends Core_Controller_Front_Action
 
     public function getLayout()
     {
-        return Mage::getBlock('Core/Layout_Admin');
+        return Mage::getBlockSingleton('Core/Layout_Admin');
     }
 }
 ?>

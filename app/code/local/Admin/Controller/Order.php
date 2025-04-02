@@ -1,14 +1,12 @@
 <?php
 class Admin_Controller_Order extends core_Controller_Admin_Action
 {
-    public function indexAction()
+    public function listAction()
     {
-        $layout = $this->getLayout();
-        $new = $layout->createBlock('Admin/order')
-            ->setTemplate('Admin/order.phtml');
+        $new = $this->getLayout()->createBlock('Admin/order');
 
-        $layout->getChild('content')->addChild('new', $new);
-        $layout->toHtml();
+        $this->getLayout()->getChild('content')->addChild('new', $new);
+        $this->getLayout()->toHtml();
     }
 
     public function viewAction()
@@ -18,31 +16,41 @@ class Admin_Controller_Order extends core_Controller_Admin_Action
             ->load($order_id);
 
 
-        $layout = Mage::getBlock('Core/Layout');
+        // $this->getLayout() = Mage::getBlock('Core/Layout');
 
-        $view_order = $layout
+        $view_order = $this->getLayout()
             ->createBlock('Admin/sales_order_view')
             ->setOrder($order);
 
-        $order_block = $layout
+        $order_block = $this->getLayout()
             ->createBlock('Admin/sales_order_view_info');
         // ->setOrderBlock($view_order);
         $view_order->addChild("order", $order_block);
 
-        $item_block = $layout
+        $item_block = $this->getLayout()
             ->createBlock('Admin/sales_order_view_item');
         // ->setOrderBlock($view_order);
         $view_order->addChild("item", $item_block);
 
-        $address_block = $layout
+        $address_block = $this->getLayout()
             ->createBlock('Admin/sales_order_view_address');
         // ->setOrderBlock($view_order);
         $view_order->addChild("address", $address_block);
 
-        $layout->getChild("content")
+        $this->getLayout()->getChild("content")
             ->addChild("view_order", $view_order);
+        // Mage::log($this->getLayout());
+        $this->getLayout()->toHtml();
+    }
 
-        $layout->toHtml();
+    public function updateStatusAction()
+    {
+        echo '<pre>';
+        print_r($_POST);
+        echo '</pre>';
+        $data = $this->getRequest()->getParams();
+        Mage::getModel('sales/order')->setData($data)->save();
+        $this->redirect('admin/order/index');
     }
 }
 ?>

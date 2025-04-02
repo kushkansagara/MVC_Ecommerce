@@ -1,0 +1,42 @@
+<?php
+$ProductList = $this->getCollection()->getData();
+?>
+<div class="container-fluid">
+    <div class="row">
+        <?php $this->getChildHtml('csv'); ?>
+        <?php $this->getChildHtml('toolbar'); ?>
+    </div>
+    <table class="table table-bordered table-hover text-center">
+        <div>
+            <thead>
+                <tr>
+                    <?php foreach ($this->_columns as $column): ?>
+                        <th><?php echo $column->getData()['lable']; ?></th>
+                    <?php endforeach; ?>
+                </tr>
+                <tr>
+                    <?php foreach ($this->_columns as $filter): ?>
+                        <td>
+                            <?php echo $filter->getFilter()->render(); ?>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+
+            </thead>
+            <tbody>
+                <?php foreach ($ProductList as $product): ?>
+                    <tr>
+                        <?php foreach ($this->_columns as $column): ?>
+                            <td>
+                                <?php
+                                $column->setRow($product);
+                                echo $column->render();
+                                ?>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </div>
+    </table>
+</div>

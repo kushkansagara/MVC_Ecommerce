@@ -35,7 +35,7 @@ class Core_Block_Html_Elements_DropDown
                     "<option value='%s' %s>%s</option>",
                     htmlspecialchars($key),
                     $selected,
-                    htmlspecialchars($value)
+                    htmlspecialchars(is_object($value) ? $value->getName() : $value)
                 );
             }
         }

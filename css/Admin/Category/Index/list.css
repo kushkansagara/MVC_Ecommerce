@@ -4,11 +4,17 @@ body {
 }
 
 .container-category-list {
-    margin-top: 50px;
     background: white;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.toobar
+{
+    padding: 20px;
 }
 
 h2 {

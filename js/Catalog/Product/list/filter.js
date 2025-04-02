@@ -230,8 +230,22 @@ const FilterApp = {
   },
 
   updateURL: function (filters) {
-    let queryParams = new URLSearchParams(filters).toString();
-    window.history.pushState({}, "", `?${queryParams}`);
+    let urlParams = new URLSearchParams(window.location.search);
+
+    // Merge existing parameters with new filters
+    Object.keys(filters).forEach((key) => {
+      urlParams.set(key, filters[key]); // Add or update parameter
+    });
+
+    // Ensure parameters like 'limit' and 'page' are not duplicated
+    let existingParams = new URLSearchParams(window.location.search);
+    existingParams.forEach((value, key) => {
+      if (!Object.keys(filters).includes(key)) {
+        urlParams.set(key, value);
+      }
+    });
+
+    window.history.pushState({}, "", `?${urlParams.toString()}`);
   },
 
   fetchProductsFromURL: function () {
@@ -255,11 +269,10 @@ const FilterApp = {
           $(this).prop("checked", value.includes($(this).val()));
         });
       } else {
-        $("#" + key).val(value);
+        $("#" + key).value = value;
       }
     });
   },
-
   collectFilterData: function () {
     let filters = {};
     $(".filter-checkbox:checked").each(function () {

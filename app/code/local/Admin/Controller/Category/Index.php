@@ -9,7 +9,7 @@ class Admin_Controller_Category_Index extends Core_Controller_Admin_Action
     ];
     public function newAction()
     {
-        $layout = Mage::getBlock('Core/Layout');
+        $layout = $this->getLayout();
         $new = $layout->createBlock('Admin/Category_Index_New')
             ->setTemplate('Admin/Category/index/new.phtml');
         $layout->getChild('content')->addChild('new', $new);
@@ -19,14 +19,11 @@ class Admin_Controller_Category_Index extends Core_Controller_Admin_Action
     }
     public function listAction()
     {
-        $layout = Mage::getBlock('Core/Layout');
-        $list = $layout->createBlock('Admin/Category_Index_List')
-            ->setTemplate('admin/category/index/list.phtml');
-
+        $layout = $this->getLayout();
+        $list = $layout->createBlock('Admin/Category_Index_List');
 
         $layout->getChild('content')->addChild('list', $list);
         $layout->getChild('head')->addCss('main.css')->addCss('Admin/Category/index/list.css');
-
         $layout->toHtml();
 
     }

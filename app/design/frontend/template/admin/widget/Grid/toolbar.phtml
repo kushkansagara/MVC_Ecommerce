@@ -1,0 +1,217 @@
+<?php
+$currentLimit = isset($_GET['limit']) ? (int) $_GET['limit'] : 5;
+$currentPage = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$totalRecords = $this->getTotalRecords();
+
+
+$totalPages = ceil($totalRecords / $currentLimit);
+$startPage = max(1, $currentPage - 2);
+$endPage = min($totalPages, $startPage + 4);
+?>
+<style>
+    .admin-toolbar {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        /* height: 200px; */
+        /* width: 100%; */
+        /* position: absolute; */
+        /* margin: auto; */
+
+    }
+
+    .admin-toolbar h1 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .toolbar-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .records-info {
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .pagination-form {
+        width: 100%;
+    }
+
+    .pagination-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .limit-selector {
+        display: flex;
+        align-items: center;
+    }
+
+    .limit-selector label {
+        margin-right: 5px;
+        color: #666;
+    }
+
+    select,
+    input[type="number"] {
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+    }
+
+    .page-navigation {
+        display: flex;
+        align-items: center;
+    }
+
+    .page-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 32px;
+        padding: 0 6px;
+        margin: 0 2px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #333;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .page-link:hover {
+        background-color: #f5f5f5;
+        border-color: #aaa;
+    }
+
+    .page-link.current {
+        background-color: #0073aa;
+        border-color: #0073aa;
+        color: white;
+        font-weight: bold;
+    }
+
+    .page-link.disabled {
+        color: #ccc;
+        background-color: #f8f8f8;
+        cursor: not-allowed;
+    }
+
+    .page-input {
+        display: flex;
+        align-items: center;
+    }
+
+    .page-input label {
+        margin-right: 5px;
+        color: #666;
+    }
+
+    .page-input input {
+        width: 60px;
+        margin-right: 5px;
+    }
+
+    .go-button {
+        padding: 6px 12px;
+        background-color: #0073aa;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .go-button:hover {
+        background-color: #005f8b;
+    }
+
+    @media (max-width: 768px) {
+        .pagination-controls {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .page-navigation {
+            margin: 10px 0;
+        }
+    }
+</style>
+<div class="admin-toolbar">
+    <h1>Records Management</h1>
+
+    <div class="toolbar-container">
+        <div class="records-info">
+            <span>Showing <?= min($totalRecords, ($currentPage - 1) * $currentLimit + 1) ?> to
+                <?= min($totalRecords, $currentPage * $currentLimit) ?> of <?= $totalRecords ?> records</span>
+        </div>
+
+        <form action="<?php $this->getUrl('*/*/list/') ?>" method="get" class="pagination-form" id="pagination-form">
+            <div class="pagination-controls">
+                <div class="limit-selector">
+                    <label for="limit">Show:</label>
+                    <select name="limit" id="limit" onchange="this.form.submit()">
+                        <option value="2" <?= $currentLimit == 2 ? 'selected' : '' ?>>2</option>
+                        <option value="5" <?= $currentLimit == 5 ? 'selected' : '' ?>>5</option>
+                        <option value="10" <?= $currentLimit == 10 ? 'selected' : '' ?>>10</option>
+                        <option value="20" <?= $currentLimit == 20 ? 'selected' : '' ?>>20</option>
+                        <option value="50" <?= $currentLimit == 50 ? 'selected' : '' ?>>50</option>
+                    </select>
+                </div>
+                <div class="page-navigation">
+                    <?php if ($currentPage > 1): ?>
+                        <a href="#" onclick="setPage(1)" class="page-link first-page" title="First Page">«</a>
+                        <a href="#" onclick="setPage(<?= $currentPage - 1 ?>)" class="page-link prev-page"
+                            title="Previous Page">‹</a>
+                    <?php else: ?>
+                        <span class="page-link disabled">«</span>
+                        <span class="page-link disabled">‹</span>
+                    <?php endif; ?>
+
+                    <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                        <?php if ($i == $currentPage): ?>
+                            <span class="page-link current"><?= $i ?></span>
+                        <?php else: ?>
+                            <a href="#" onclick="setPage(<?= $i ?>)" class="page-link"><?= $i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+
+                    <?php if ($currentPage < $totalPages): ?>
+                        <a href="#" onclick="setPage(<?= $currentPage + 1 ?>)" class="page-link next-page"
+                            title="Next Page">›</a>
+                        <a href="#" onclick="setPage(<?= $totalPages ?>)" class="page-link last-page"
+                            title="Last Page">»</a>
+                    <?php else: ?>
+                        <span class="page-link disabled">›</span>
+                        <span class="page-link disabled">»</span>
+                    <?php endif; ?>
+                </div>
+                <input type="hidden" name="page" id="page-input" value="<?= $currentPage ?>">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function setPage(page) {
+        event.preventDefault();
+        document.getElementById('page-input').value = page;
+        document.getElementById('pagination-form').submit();;
+
+    }
+</script>

@@ -139,10 +139,13 @@ class core_Model_Resource_Collection_Abstract
             $query .= " " . $orderBySql;
         }
         if (isset($this->_select['LIMIT'])) {
-            $orderBySql = sprintf(" LIMIT %d OFFSET %d", $this->_select['LIMIT'][0], $this->_select['LIMIT'][1]);
-            $query .= " " . $orderBySql;
+            $ordersql = sprintf("LIMIT %s", $this->_select['LIMIT']['limit']);
+            if ($this->_select['LIMIT']['offset'] != '') {
+                $ordersql .= " OFFSET " . $this->_select['LIMIT']['offset'];
+            }
+            $query = $query . " " . $ordersql;
         }
-
+        // echo $query;
         return $query;
     }
 
@@ -281,12 +284,12 @@ class core_Model_Resource_Collection_Abstract
         $this->_select['HAVING'][$field][] = $condition;
         return $this;
     }
-    public function limit($limit, $offset = 0)
+    public function limit($limit, $offset = "")
     {
-        // if (!is_array($condition)) {
-        //     $condition = ['eq' => $condition];
-        // }
-        $this->_select['LIMIT'][] = ['limit' => $limit, 'offset' => $offset];
+        $this->_select["LIMIT"] = [
+            'limit' => $limit,
+            'offset' => ($offset - 1) * $limit
+        ];
         return $this;
     }
 

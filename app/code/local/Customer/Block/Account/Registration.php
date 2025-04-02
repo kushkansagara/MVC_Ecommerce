@@ -9,5 +9,11 @@ class Customer_Block_Account_registration extends Core_Block_Template
         $element = new $classname($data);
         return $element->render();
     }
+
+    public function getCustomer()
+    {
+        $id = Mage::getSingleton('core/session')->get('customer_id');
+        return Mage::getModel('customer/account')->load($id);
+    }
 }
 ?>

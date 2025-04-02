@@ -6,291 +6,467 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard</title>
     <style>
-        * {
+        :root {
+            --primary: #4361ee;
+            --primary-light: #eef2ff;
+            --secondary: #2b2d42;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --light: #f9fafb;
+            --dark: #1f2937;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-radius: 0.5rem;
+        }
+
+        /* Base styles */
+        /* * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
+        }*/
 
         body {
-            background-color: #f4f6f9;
+            font-family: var(--font-family);
+            background-color: #f5f7fa;
+            color: var(--gray-700);
+            line-height: 1.6;
         }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            f
         }
 
-        header {
-            background-color: #3498db;
-            color: white;
-            padding: 15px 20px;
+        .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .dashboard-header h1 {
+            color: var(--secondary);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .dashboard-header a {
+            text-decoration: none;
+        }
+
+        .dashboard-header-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .change-btn,
+        .logout-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .change-btn {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .change-btn:hover {
+            background-color: var(--primary);
+            color: white;
         }
 
         .logout-btn {
-            background-color: #e74c3c;
+            background-color: var(--danger);
             color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
         }
 
         .logout-btn:hover {
-            background-color: #c0392b;
+            background-color: #dc2626;
         }
 
-        .customer-info {
+        /* Section Styles */
+        section {
             background-color: white;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 2.5rem;
         }
 
-        .customer-info h2 {
-            margin-bottom: 15px;
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+        section h2 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        section h2 a {
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+
+        section h2 a:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Customer Info Section */
+        .customer-info a {
+            display: inline-block;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .customer-info a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
         }
 
         .customer-details {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
+            gap: 1.5rem;
         }
 
         .detail-item {
-            margin-bottom: 10px;
+            padding: 1rem;
+            background-color: var(--gray-100);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .detail-label {
-            font-weight: bold;
-            color: #7f8c8d;
+            font-weight: 600;
+            color: var(--gray-500);
+            font-size: 0.9rem;
         }
 
-        .addresses-section,
-        .orders-section {
-            background-color: white;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        .detail-item span:last-child {
+            font-weight: 500;
+            color: var(--gray-800);
         }
 
-        .addresses-section h2,
-        .orders-section h2 {
-            margin-bottom: 15px;
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .add-address-btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .add-address-btn:hover {
-            background-color: #27ae60;
-        }
-
+        /* Addresses Section */
         .address-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .address-box {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
             position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .address-box:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary-light);
+        }
+
+        .address-box h3 {
+            font-size: 1.1rem;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        .address-box p {
+            margin-bottom: 0.75rem;
+            color: var(--gray-700);
+        }
+
+        .address-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .address-box p strong {
+            color: var(--success);
         }
 
         .address-actions {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 1.5rem;
+            right: 1.5rem;
             display: flex;
-            gap: 5px;
+            gap: 0.75rem;
         }
 
-        .edit-btn,
-        .delete-btn {
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
+        .address-actions a {
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        .edit-btn {
-            background-color: #3498db;
-            color: white;
+        .address-actions a:first-child {
+            color: var(--info);
         }
 
-        .edit-btn:hover {
-            background-color: #2980b9;
+        .address-actions a:last-child {
+            color: var(--danger);
         }
 
-        .delete-btn {
-            background-color: #e74c3c;
-            color: white;
+        .address-actions a:hover {
+            text-decoration: underline;
         }
 
-        .delete-btn:hover {
-            background-color: #c0392b;
+        .address-box a {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .address-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Orders Section */
+        .orders-section {
+            overflow-x: auto;
         }
 
         .orders-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 1rem;
         }
 
         .orders-table th,
         .orders-table td {
-            padding: 12px 15px;
+            padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--gray-200);
         }
 
         .orders-table th {
-            background-color: #f8f9fa;
-            font-weight: bold;
-            color: #2c3e50;
+            background-color: var(--gray-100);
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         .orders-table tr:hover {
-            background-color: #f5f5f5;
+            background-color: var(--gray-100);
         }
 
         .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .status-delivered {
-            background-color: #2ecc71;
-            color: white;
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .status-processing {
-            background-color: #f39c12;
-            color: white;
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-shipped {
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .status-delivered {
+            background-color: #d1fae5;
+            color: #065f46;
         }
 
         .status-cancelled {
-            background-color: #e74c3c;
-            color: white;
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-pending {
+            background-color: #f3f4f6;
+            color: #374151;
         }
 
         .view-details-btn {
-            background-color: #3498db;
-            color: white;
+            background-color: var(--gray-100);
+            color: var(--gray-700);
             border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 12px;
+            transition: all 0.2s ease;
         }
 
         .view-details-btn:hover {
-            background-color: #2980b9;
+            background-color: var(--primary);
+            color: white;
         }
 
-        /* Modal styles */
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 1000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 5px;
-            width: 50%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            max-width: 600px;
+            position: relative;
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-500);
             cursor: pointer;
         }
 
         .close:hover {
-            color: black;
+            color: var(--danger);
         }
 
+        .modal h2 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        /* Form Styles */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-700);
         }
 
-        .form-group input,
-        .form-group textarea,
+        .form-group input[type="text"],
         .form-group select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            transition: border-color 0.2s ease;
         }
 
-        .form-group textarea {
-            height: 100px;
+        .form-group input[type="text"]:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-group input[type="checkbox"] {
+            margin-right: 0.5rem;
         }
 
         .submit-btn {
-            background-color: #2ecc71;
+            background-color: var(--primary);
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            font-weight: bold;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            margin-top: 1rem;
         }
 
         .submit-btn:hover {
-            background-color: #27ae60;
+            background-color: var(--secondary);
         }
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
+            dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .dashboard-header-buttons {
+                width: 100%;
+            }
+
+            .change-btn,
+            .logout-btn {
+                flex: 1;
+                text-align: center;
+            }
+
             .customer-details {
                 grid-template-columns: 1fr;
             }
@@ -299,13 +475,15 @@
                 grid-template-columns: 1fr;
             }
 
-            .modal-content {
-                width: 90%;
-            }
-
             .orders-table {
                 display: block;
                 overflow-x: auto;
+            }
+
+            .modal-content {
+                width: 90%;
+                padding: 1.5rem;
+                margin: 10% auto;
             }
         }
     </style>
@@ -313,135 +491,54 @@
 
 <body>
     <?php
-    // Database connection would go here
-    // $conn = new mysqli('localhost', 'username', 'password', 'database');
-    
-    // For demonstration, we'll use sample data
-    $customer = [
-        'id' => 1,
-        'name' => 'John Doe',
-        'email' => 'john.doe@example.com',
-        'phone' => '555-123-4567',
-        'registered_date' => '2023-04-15',
-        'total_orders' => 12,
-        'total_spent' => 1247.89
-    ];
-
-    $addresses = [
-        [
-            'id' => 1,
-            'type' => 'Home',
-            'street' => '123 Main St',
-            'city' => 'New York',
-            'state' => 'NY',
-            'zip' => '10001',
-            'country' => 'USA',
-            'is_default' => true
-        ],
-        [
-            'id' => 2,
-            'type' => 'Work',
-            'street' => '456 Office Blvd',
-            'city' => 'New York',
-            'state' => 'NY',
-            'zip' => '10002',
-            'country' => 'USA',
-            'is_default' => false
-        ],
-        [
-            'id' => 3,
-            'type' => 'Shipping',
-            'street' => '789 Delivery Ave',
-            'city' => 'Brooklyn',
-            'state' => 'NY',
-            'zip' => '11201',
-            'country' => 'USA',
-            'is_default' => false
-        ]
-    ];
-
-    $orders = [
-        [
-            'id' => 'ORD-12345',
-            'date' => '2025-03-15',
-            'total' => 129.99,
-            'status' => 'delivered',
-            'items' => 3
-        ],
-        [
-            'id' => 'ORD-12346',
-            'date' => '2025-03-01',
-            'total' => 85.50,
-            'status' => 'delivered',
-            'items' => 2
-        ],
-        [
-            'id' => 'ORD-12347',
-            'date' => '2025-02-20',
-            'total' => 213.75,
-            'status' => 'processing',
-            'items' => 4
-        ],
-        [
-            'id' => 'ORD-12348',
-            'date' => '2025-02-10',
-            'total' => 45.99,
-            'status' => 'cancelled',
-            'items' => 1
-        ],
-        [
-            'id' => 'ORD-12349',
-            'date' => '2025-01-29',
-            'total' => 189.50,
-            'status' => 'delivered',
-            'items' => 3
-        ]
-    ];
-
-    // Process form submissions would go here
-    // if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    //     // Handle form submissions (address add/edit/delete)
-    // }
-    ?>
-    <?php
     $customer = $this->getCustomer();
     $addresses = $this->getCustomerAddress();
     $orders = $this->getOrderData();
     ?>
 
+
     <div class="container">
-        <header>
+        <div class="dashboard-header">
             <h1>Customer Dashboard</h1>
-            <button class="logout-btn">Logout</button>
-        </header>
+            <div class="header-buttons">
+                <a href="<?php echo $this->getUrl('*/*/changePassword') ?>">
+                    <button class="change-btn">Change Password</button>
+                </a>
+                <a href="<?php echo $this->getUrl('*/*/logout') ?>">
+                    <button class="logout-btn">Logout</button>
+                </a>
+            </div>
+        </div>
 
         <section class="customer-info">
             <h2>Personal Information</h2>
+            <a href="<?php echo $this->getUrl('*/*/registration') ?>/?id=<?php echo $customer->getCustomerId() ?>">
+                <i class="fas fa-edit"></i> Edit Information
+            </a>
             <div class="customer-details">
                 <div class="detail-item">
-                    <span class="detail-label">Name:</span>
+                    <span class="detail-label">Name</span>
                     <span><?php echo $customer->getFirstName(); ?></span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Email:</span>
+                    <span class="detail-label">Email</span>
                     <span><?php echo $customer->getEmail(); ?></span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Phone:</span>
+                    <span class="detail-label">Phone</span>
                     <span><?php echo $customer->getPhoneNumber(); ?></span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Member Since:</span>
+                    <span class="detail-label">Member Since</span>
                     <span><?php echo date('F j, Y', strtotime($customer->getCreatedAt())); ?></span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Date of Birth:</span>
+                    <span class="detail-label">Date of Birth</span>
                     <span><?php echo $customer->getDateOfBirth(); ?></span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Total Spent:</span>
-                    <!-- <span>$<?php //echo number_format($customer['total_spent'], 2); ?></span> -->
-                    <span>5000</span>
+                    <span class="detail-label">Total Spent</span>
+                    <span>$5,000.00</span>
                 </div>
             </div>
         </section>
@@ -458,8 +555,7 @@
                             <a
                                 href="<?php echo $this->getUrl('*/account_address/index') ?>/?id=<?php echo $address->getAddressId() ?>">Edit</a>
                             <a href="<?php echo $this->getUrl('*/account_address/delete') ?>/?id=<?php echo $address->getAddressId() ?>"
-                                onclick="return confirm('Are you sure you want to delete this record?')">Delete</a>
-                            <!-- <button class="delete-btn">Delete</button> -->
+                                onclick="return confirm('Are you sure you want to delete this address?')">Delete</a>
                         </div>
                         <h3>Address</h3>
                         <?php if ($address->getIsDefault()): ?>
@@ -470,6 +566,12 @@
                             <?php echo $address->getZipcode(); ?>
                         </p>
                         <p><?php echo $address->getCountry(); ?></p>
+
+                        <?php if (!$address->getIsDefault()): ?>
+                            <a href="<?php echo $this->getUrl('*/*/setDefault') ?>/?id=<?php echo $address->getAddressId() ?>">
+                                Set as Default Address
+                            </a>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -491,18 +593,20 @@
                 <tbody>
                     <?php foreach ($orders as $order): ?>
                         <tr>
-                            <td><?php echo $order->getOrderId(); ?></td>
+                            <td>#<?php echo $order->getOrderId(); ?></td>
                             <td><?php echo date('M j, Y', strtotime($order->getCreateAt())); ?></td>
-                            <td><?php echo $order->getCouponDiscount(); ?></td>
-                            <td>$<?php echo number_format($order->getTotalAmount(), 2); ?></td>
+                            <td>₹<?php echo number_format($order->getCouponDiscount(), 2); ?></td>
+                            <td>₹<?php echo number_format($order->getTotalAmount(), 2); ?></td>
                             <td>
-                                <span class="status-badge status-<?php echo $order->getOrderStatus(); ?>">
+                                <span class="status-badge status-<?php echo strtolower($order->getOrderStatus()); ?>">
                                     <?php echo ucfirst($order->getOrderStatus()); ?>
                                 </span>
                             </td>
                             <td>
                                 <button class="view-details-btn"
-                                    onclick="viewOrderDetails('<?php echo $order->getOrderId(); ?>')">View Details</button>
+                                    onclick="viewOrderDetails('<?php echo $order->getOrderId(); ?>')">
+                                    View Details
+                                </button>
                             </td>
                         </tr>
                     <?php endforeach; ?>

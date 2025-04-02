@@ -1,0 +1,65 @@
+<form action="<?php echo $this->getUrl('*/*/list') ?>" method="GET">
+    <input type="hidden" name="limit"
+        value="<?php echo !empty($this->getRequest()->getQuery('limit')) ? $this->getRequest()->getQuery('limit') : 5; ?>">
+    <input type="hidden" name="page"
+        value="<?php echo !empty($this->getRequest()->getQuery('page')) ? $this->getRequest()->getQuery('page') : 1; ?>">
+    <button type="submit" name="export" value="export">Export in CSV</button>
+</form>
+
+<style>
+    /* Export Form & Button Styling */
+    form[action*="/list"] {
+        margin: 20px 0;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    button[name="export"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.2s, transform 0.1s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    button[name="export"]:hover {
+        background-color: #45a049;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    button[name="export"]:active {
+        transform: translateY(1px);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    button[name="export"]::before {
+        content: "";
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    /* For mobile responsiveness */
+    @media (max-width: 768px) {
+        form[action*="/list"] {
+            justify-content: center;
+        }
+
+        button[name="export"] {
+            width: 100%;
+            justify-content: center;
+            padding: 12px 16px;
+        }
+    }
+</style>

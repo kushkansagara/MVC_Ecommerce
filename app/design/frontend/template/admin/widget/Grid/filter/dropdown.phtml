@@ -1,0 +1,11 @@
+<?php
+$array = $this->getFilterData()['options'];
+?>
+
+<select class="form-select">
+    <?php foreach ($array as $a): ?>
+        <option value="<?php echo htmlspecialchars($a); ?>">
+            <?php echo htmlspecialchars($a); ?>
+        </option>
+    <?php endforeach; ?>
+</select>

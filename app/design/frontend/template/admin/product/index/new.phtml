@@ -409,7 +409,7 @@
                 <?php echo $this->getHtml('dropDown', [
                     'name' => "catalog_product[category_id]",
                     'class' => 'product-form-input',
-                    'value' => $categories,
+                    'options' => $categories,
                     'checked' => isset($catalog_product) ? $catalog_product->getCategoryId() : ""
                 ]); ?>
             </div>
@@ -425,7 +425,7 @@
                         <?php
 
                         echo $this->getHtml('label', [
-                            'for' => "id{$data->getAttributeId()}",
+                            'for' => $data->getName(),
                             'value' => $data->getName(),
                             'class' => 'form-label fw-bold'
                         ]);
@@ -489,11 +489,13 @@
         <button type="submit" class="product-form-submit">Submit</button>
         <?php echo $this->getHtml('formend', []); ?>
 
+        <a href="<?php echo $this->getUrl('*/*/list') ?>">List of product</a>
+
         <script>
             function addAttributeField() {
                 const select = document.getElementById('attribute-select');
                 const container = document.getElementById('attribute-container');
-                const selectedOption = select.options[select.selectedIndex];
+            cons t selectedOption = select.options[select.selectedIndex];
 
                 if (selectedOption.value) {
                     const attributeId = selectedOption.value;
@@ -505,8 +507,8 @@
                     fieldWrapper.innerHTML = `
             <label>${attributeName}</label>
             <input type="hidden" name="catalog_product_attribute[${attributeId}][attribute_id]" value="${attributeId}">
-            <input type="${getInputType(attributeType)}" name="catalog_product_attribute[${attributeId}][value]">
-            `;
+            <inp ut type="${getInputType(attributeType)}" name="catalog_product_attribute[${attributeId}][value]">
+                `;
 
                     container.appendChild(fieldWrapper);
                     select.selectedIndex = 0;
@@ -514,15 +516,15 @@
             }
 
             function getInputType(attributeType) {
-                switch (attributeType) {
-                    case 'number':
-                        return 'number';
-                    case 'boolean':
-                        return 'checkbox';
-                    case 'date':
-                        return 'date';
-                    default:
-                        return 'text';
+            swit ch(attributeType) {
+                case 'number':
+                    return 'number';
+                case 'boolean':
+                    return 'checkbox';
+                case 'date':
+                    return 'date';
+                default:
+                    return 'text';
                 }
             }
             document.getElementById("img").addEventListener("change", function (event) {
@@ -532,14 +534,15 @@
                 let files = event.target.files;
                 for (let i = 0; i < files.length; i++) {
                     let label = document.createElement("label");
-                    let radio = document.createElement("input");
+                    let
+                        radio = document.createElement("input");
                     radio.type = "radio";
                     radio.name = "main_image";
                     radio.value = files[i].name;
                     label.appendChild(radio);
                     label.appendChild(document.createTextNode(" " + files[i].name));
                     fileListDiv.appendChild(label);
-                    fileListDiv.appendChild(document.createElement("br"));
+                    fileListDiv.appendChild(document.createElement(" br"));
                 }
             });
         </script>

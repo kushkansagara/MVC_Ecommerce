@@ -2,13 +2,17 @@
 
 class Catalog_Block_Product_List extends Core_Block_Template
 {
+    protected $_collection;
     public function __construct()
     {
         $filter = $this->getLayout()->createBlock('Catalog/Product_List_Filter');
         $products = $this->getLayout()->createBlock('Catalog/Product_List_Products');
+
         $this->addChild('filter', $filter);
         $this->addChild('products', $products);
+
     }
+
     protected $_productImage;
     public function getProductData()
     {
@@ -20,26 +24,21 @@ class Catalog_Block_Product_List extends Core_Block_Template
     }
     public function getImage()
     {
-        $request = Mage::getModel("core/request");
-        $id = $request->getQuery('id');
-        $product = Mage::getModel('catalog/product')
-            ->load($id);
-        $this->_productImage = Mage::getModel('catalog/product')->getCollection()
-            ->joinLeft(
-                ['cmp' => 'catalog_media_gallery'],
-                'cmp.product_id = main_table.product_id',
-                ['media_file_path' => 'file_path', 'media_type' => 'type']
-            )
-            ->groupBy(['cmp.product_id'])
-        ;
-        return $this->_productImage->getData();
+        // $request = Mage::getModel("core/request");
+        // $id = $request->getQuery('id');
+        // $product = Mage::getModel('catalog/product')
+        //     ->load($id);
+        // $this->_productImage = Mage::getModel('catalog/product')->getCollection()
+        //     ->joinLeft(
+        //         ['cmp' => 'catalog_media_gallery'],
+        //         'cmp.product_id = main_table.product_id',
+        //         ['media_file_path' => 'file_path', 'media_type' => 'type']
+        //     )
+        //     ->groupBy(['cmp.product_id'])
+        // ;
+        // return $this->_productImage->getData();
     }
-    public function getProduct()
-    {
-        $product = Mage::getSingleton('catalog/filter')
-            ->getProductionCollection();
-        return $product->getData();
-    }
+
     public function image($id)
     {
         $image = Mage::getModel('catalog/product')->load($id);

@@ -1,36 +1,48 @@
 <?php $result = $this->getCategory(); ?>
 <?php $singleCategory = $this->getCategoryForEdit(); ?>
+<?php $result = $this->getCategory(); ?>
+<?php $singleCategory = $this->getCategoryForEdit(); ?>
+
 <div class="category-new">
+    <div class="content">
+        <!-- ✅ Added missing .content wrapper -->
+        <h1><?php echo !empty($singleCategory) ? 'Edit Category' : 'Add Category'; ?></h1>
 
-    <h1><?php echo !empty($singleCategory) ? 'Edit Category' : 'Add Category'; ?></h1>
-    <?php echo $this->getHtml('formStart', ['method' => 'POST', 'action' => $this->getUrl('*/*/save'), 'enctype' => 'multipart/form-data']); ?>
+        <?php echo $this->getHtml('formStart', [
+            'method' => 'POST',
+            'action' => $this->getUrl('*/*/save'),
+            'enctype' => 'multipart/form-data'
+        ]); ?>
 
-    <?php echo $this->getHtml('hidden', ['id' => 'category_id', 'name' => "catalog_category[category_id]", 'value' => !empty($singleCategory) ? $singleCategory->getCategoryId() : ""]); ?>
-    <?php //echo $this->getHtml('hidden', ['id' => 'result_id', 'name' => "result[result_id]", 'value' => !empty($result) ? $result->getresultId() : ""]); ?>
+        <?php echo $this->getHtml('hidden', [
+            'id' => 'category_id',
+            'name' => "catalog_category[category_id]",
+            'value' => !empty($singleCategory) ? $singleCategory->getCategoryId() : ""
+        ]); ?>
 
-    <?php echo $this->getHtml('label', ['for' => 'name']); ?>
-    <?php echo $this->getHtml('text', [
-        'id' => 'name',
-        'name' => "catalog_category[name]",
-        'value' => !empty($singleCategory) ? $singleCategory->getName() : ""
-    ]); ?>
-    <?php //echo $this->getHtml('text', ['id' => 'name', 'name' => "catalog_category[name]", 'value' => ""]); ?>
+        <?php echo $this->getHtml('label', ['for' => 'name']); ?>
+        <?php echo $this->getHtml('text', [
+            'id' => 'name',
+            'name' => "catalog_category[name]",
+            'value' => !empty($singleCategory) ? $singleCategory->getName() : ""
+        ]); ?>
 
-    <?php echo $this->getHtml('label', ['for' => 'description']); ?>
-    <?php echo $this->getHtml('textarea', [
-        'id' => 'description',
-        'name' => "catalog_category[description]",
-        'value' => !empty($singleCategory) ? $singleCategory->getDescription() : ""
-    ]); ?>
+        <?php echo $this->getHtml('label', ['for' => 'description']); ?>
+        <?php echo $this->getHtml('textarea', [
+            'id' => 'description',
+            'name' => "catalog_category[description]",
+            'value' => !empty($singleCategory) ? $singleCategory->getDescription() : ""
+        ]); ?>
 
-    <?php //echo $this->getHtml('hidden', ['id' => 'parent_id', 'name' => "catalog_category[parent_id]", 'value' => 0]); ?>
-    <?php echo $this->getHtml('label', ['for' => 'parent_id']); ?>
-    <?php echo $this->getHtml('dropDown', [
-        'name' => "catalog_category[parent_id]",
-        'value' => !(empty($result)) ? $result : [0],
-        'checked' => !empty($singleCategory) ? $singleCategory->getParentId() : ""
-    ]); ?>
+        <?php echo $this->getHtml('label', ['for' => 'parent_id']); ?>
+        <?php echo $this->getHtml('dropDown', [
+            'name' => "catalog_category[parent_id]",
+            'options' => !empty($result) ? $result : [],
+            'selected' => !empty($singleCategory) ? $singleCategory->getParentId() : ""
+        ]); ?>
 
-    <button type="submit">Submit</button>
-    <?php echo $this->getHtml('formend', []); ?>
+        <button type="submit">Submit</button>
+        <?php echo $this->getHtml('formEnd', []); ?>
+        <a href="<?php echo $this->getUrl('*/*/list') ?>">List all Category</a>
+    </div>
 </div>

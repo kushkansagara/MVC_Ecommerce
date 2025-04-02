@@ -15,8 +15,11 @@ class Core_Model_Request
         $uri = array_filter(explode('/', $uri));
         $this->_moduleName = isset($uri[0]) ? $uri[0] : 'cms';
         $this->_controllerName = isset($uri[1]) ? $uri[1] : 'index';
-        $this->_actionName = isset($uri[2]) ? $uri[2] : 'index';
-
+        if (isset($uri[2])) {
+            $this->_actionName = explode('?', $uri[2])[0];
+        } else {
+            $this->_actionName = 'index';
+        }
     }
     public function getModuleName()
     {
@@ -24,7 +27,6 @@ class Core_Model_Request
     }
     public function getControllerName()
     {
-
         return $this->_controllerName;
     }
     public function getActionName()
@@ -79,6 +81,10 @@ class Core_Model_Request
     public function isGet()
     {
         return $_SERVER['REQUEST_METHOD'] === 'GET';
+    }
+    public function getMessages()
+    {
+        return Mage::getSingleton('core/message');
     }
 }
 ?>

@@ -7,7 +7,8 @@ class Core_Block_Template
     protected $_template;
     public function toHtml()
     {
-        include_once(Mage::getBaseDir() . 'app/design/frontend/template/' . $this->_template);
+        // include_once(Mage::getBaseDir() . 'app/design/frontend/template/' . $this->_template);
+        include(Mage::getBaseDir() . 'app/design/frontend/template/' . $this->_template);
     }
     public function addChild($key, $block)
     {
@@ -70,5 +71,12 @@ class Core_Block_Template
     {
         return Mage::getBlockSingleton('core/layout');
     }
+
+    public function getRequest()
+    {
+        return Mage::getModel('Core/Request');
+    }
+
+
 }
 ?>

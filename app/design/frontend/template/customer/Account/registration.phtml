@@ -205,6 +205,7 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<?php $customerInfo = $this->getCustomer() ?>
 
 <body>
     <div class="registration-container">
@@ -227,6 +228,13 @@
                     <i class="fas fa-user"></i> Personal Information
                 </h2>
 
+                <?php echo $this->getHtml('hidden', [
+                    'id' => 'customer_id',
+                    'name' => "customer_account[customer_id]",
+                    'value' => !empty($customerInfo) ? $customerInfo->getCustomerId() : '',
+                    'class' => 'form-control required validate-alphabet',
+                    'placeholder' => 'Enter your first name'
+                ]); ?>
                 <div class="form-row">
                     <div class="form-group">
                         <?php echo $this->getHtml('label', [
@@ -236,6 +244,8 @@
                         <?php echo $this->getHtml('text', [
                             'id' => 'first_name',
                             'name' => "customer_account[first_name]",
+                            'value' => !empty($customerInfo) ? $customerInfo->getFirstName() : '',
+
                             'class' => 'form-control required validate-alphabet',
                             'placeholder' => 'Enter your first name'
                         ]); ?>
@@ -249,6 +259,7 @@
                         <?php echo $this->getHtml('text', [
                             'id' => 'last_name',
                             'name' => "customer_account[last_name]",
+                            'value' => !empty($customerInfo) ? $customerInfo->getLastName() : '',
                             'class' => 'form-control required validate-alphabet',
                             'placeholder' => 'Enter your last name'
                         ]); ?>
@@ -264,6 +275,7 @@
                         <?php echo $this->getHtml('email', [
                             'id' => 'email',
                             'name' => "customer_account[email]",
+                            'value' => !empty($customerInfo) ? $customerInfo->getEmail() : '',
                             'class' => 'form-control required validate-email',
                             'placeholder' => 'Enter your email address'
                         ]); ?>
@@ -277,6 +289,7 @@
                         <?php echo $this->getHtml('phone', [
                             'id' => 'phone_number',
                             'name' => "customer_account[phone_number]",
+                            'value' => !empty($customerInfo) ? $customerInfo->getPhoneNumber() : '',
                             'class' => 'form-control required validate-phonenumber',
                             'placeholder' => 'Enter your phone number'
                         ]); ?>
@@ -292,6 +305,7 @@
                         <?php echo $this->getHtml('date', [
                             'id' => 'date_of_birth',
                             'name' => "customer_account[date_of_birth]",
+                            'value' => !empty($customerInfo) ? $customerInfo->getDateOfBirth() : '',
                             'class' => 'form-control required',
                             'max' => date('Y-m-d')
                         ]); ?>
@@ -306,6 +320,7 @@
                             'id' => 'gender',
                             'name' => "customer_account[gender]",
                             'class' => 'required',
+                            'checked' => !empty($customerInfo) ? $customerInfo->getGender() : '',
                             'options' => [
                                 'Male' => 'Male',
                                 'Female' => 'Female',
@@ -314,153 +329,155 @@
                         ]); ?>
                     </div>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <?php echo $this->getHtml('label', [
-                            'for' => 'password',
-                            'class' => 'form-control-label'
-                        ]); ?>
-                        <div class="password-container">
-                            <?php echo $this->getHtml('password', [
-                                'id' => 'password',
-                                'name' => "customer_account[password_hash]",
-                                'class' => 'form-control required validate-password',
-                                'placeholder' => 'Create a password'
+                <?php if (!$customerInfo->getData()): ?>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <?php echo $this->getHtml('label', [
+                                'for' => 'password',
+                                'class' => 'form-control-label'
                             ]); ?>
-                            <span class="password-toggle" id="togglePassword">
-                                <i class="fas fa-eye"></i>
-                            </span>
+                            <div class="password-container">
+                                <?php echo $this->getHtml('password', [
+                                    'id' => 'password',
+                                    'name' => "customer_account[password_hash]",
+                                    'class' => 'form-control required validate-password',
+                                    'placeholder' => 'Create a password'
+                                ]); ?>
+                                <span class="password-toggle" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                            <div class="hint">Password must be at least 8 characters with letters, numbers and special
+                                characters</div>
                         </div>
-                        <div class="hint">Password must be at least 8 characters with letters, numbers and special
-                            characters</div>
-                    </div>
 
-                    <div class="form-group">
-                        <?php echo $this->getHtml('label', [
-                            'for' => 'confirm_password',
-                            'class' => 'form-control-label'
-                        ]); ?>
-                        <div class="password-container">
-                            <?php echo $this->getHtml('password', [
-                                'id' => 'confirm_password',
-                                'name' => "confirm_password",
-                                'class' => 'form-control required validate-confirm-password',
-                                'placeholder' => 'Confirm your password'
+                        <div class="form-group">
+                            <?php echo $this->getHtml('label', [
+                                'for' => 'confirm_password',
+                                'class' => 'form-control-label'
                             ]); ?>
-                            <span class="password-toggle" id="toggleConfirmPassword">
-                                <i class="fas fa-eye"></i>
-                            </span>
+                            <div class="password-container">
+                                <?php echo $this->getHtml('password', [
+                                    'id' => 'confirm_password',
+                                    'name' => "confirm_password",
+                                    'class' => 'form-control required validate-confirm-password',
+                                    'placeholder' => 'Confirm your password'
+                                ]); ?>
+                                <span class="password-toggle" id="toggleConfirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <?php if (!$customerInfo->getData()): ?>
+                <div class="form-section">
+                    <h2 class="form-section-title">
+                        <i class="fas fa-map-marker-alt"></i> Address Information
+                    </h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <?php echo $this->getHtml('label', [
+                                'for' => 'street_address',
+                                'class' => 'form-control-label'
+                            ]); ?>
+                            <?php echo $this->getHtml('text', [
+                                'id' => 'street_address',
+                                'name' => "customer_account[street_address]",
+                                'class' => 'form-control required validate-address',
+                                'placeholder' => 'Enter your street address'
+                            ]); ?>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <?php echo $this->getHtml('label', [
+                                'for' => 'city',
+                                'class' => 'form-control-label'
+                            ]); ?>
+                            <?php echo $this->getHtml('text', [
+                                'id' => 'city',
+                                'name' => "customer_account[city]",
+                                'class' => 'form-control required validate-alphabet',
+                                'placeholder' => 'Enter your city'
+                            ]); ?>
+                        </div>
+
+                        <div class="form-group">
+                            <?php echo $this->getHtml('label', [
+                                'for' => 'zipcode',
+                                'class' => 'form-control-label'
+                            ]); ?>
+                            <?php echo $this->getHtml('text', [
+                                'id' => 'zipcode',
+                                'name' => "customer_account[zipcode]",
+                                'class' => 'form-control required validate-postalcode',
+                                'placeholder' => 'Enter your postal/zip code'
+                            ]); ?>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <?php echo $this->getHtml('label', [
+                                'for' => 'state',
+                                'class' => 'form-control-label'
+                            ]); ?>
+                            <?php echo $this->getHtml('text', [
+                                'id' => 'state',
+                                'name' => "customer_account[state]",
+                                'class' => 'form-control required validate-alphabet',
+                                'placeholder' => 'Enter your state/province'
+                            ]); ?>
+                        </div>
+
+                        <div class="form-group">
+                            <?php echo $this->getHtml('label', [
+                                'for' => 'region',
+                                'class' => 'form-control-label'
+                            ]); ?>
+                            <?php echo $this->getHtml('text', [
+                                'id' => 'region',
+                                'name' => "customer_account[region]",
+                                'class' => 'form-control validate-alphabet',
+                                'placeholder' => 'Enter your region (optional)'
+                            ]); ?>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <?php echo $this->getHtml('label', [
+                                'for' => 'country',
+                                'class' => 'form-control-label'
+                            ]); ?>
+                            <?php echo $this->getHtml('dropdown', [
+                                'id' => 'country',
+                                'name' => "customer_account[country]",
+                                'class' => 'form-control required',
+                                'options' => [
+                                    '' => 'Select Country',
+                                    'India' => 'India',
+                                    'United States' => 'United States',
+                                    'Canada' => 'Canada',
+                                    'United Kingdom' => 'United Kingdom',
+                                    'Australia' => 'Australia',
+                                    'Germany' => 'Germany',
+                                    'France' => 'France',
+                                    'Japan' => 'Japan',
+                                    'China' => 'China'
+                                ]
+                            ]); ?>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="form-section">
-                <h2 class="form-section-title">
-                    <i class="fas fa-map-marker-alt"></i> Address Information
-                </h2>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <?php echo $this->getHtml('label', [
-                            'for' => 'street_address',
-                            'class' => 'form-control-label'
-                        ]); ?>
-                        <?php echo $this->getHtml('text', [
-                            'id' => 'street_address',
-                            'name' => "customer_account[street_address]",
-                            'class' => 'form-control required validate-address',
-                            'placeholder' => 'Enter your street address'
-                        ]); ?>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <?php echo $this->getHtml('label', [
-                            'for' => 'city',
-                            'class' => 'form-control-label'
-                        ]); ?>
-                        <?php echo $this->getHtml('text', [
-                            'id' => 'city',
-                            'name' => "customer_account[city]",
-                            'class' => 'form-control required validate-alphabet',
-                            'placeholder' => 'Enter your city'
-                        ]); ?>
-                    </div>
-
-                    <div class="form-group">
-                        <?php echo $this->getHtml('label', [
-                            'for' => 'zipcode',
-                            'class' => 'form-control-label'
-                        ]); ?>
-                        <?php echo $this->getHtml('text', [
-                            'id' => 'zipcode',
-                            'name' => "customer_account[zipcode]",
-                            'class' => 'form-control required validate-postalcode',
-                            'placeholder' => 'Enter your postal/zip code'
-                        ]); ?>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <?php echo $this->getHtml('label', [
-                            'for' => 'state',
-                            'class' => 'form-control-label'
-                        ]); ?>
-                        <?php echo $this->getHtml('text', [
-                            'id' => 'state',
-                            'name' => "customer_account[state]",
-                            'class' => 'form-control required validate-alphabet',
-                            'placeholder' => 'Enter your state/province'
-                        ]); ?>
-                    </div>
-
-                    <div class="form-group">
-                        <?php echo $this->getHtml('label', [
-                            'for' => 'region',
-                            'class' => 'form-control-label'
-                        ]); ?>
-                        <?php echo $this->getHtml('text', [
-                            'id' => 'region',
-                            'name' => "customer_account[region]",
-                            'class' => 'form-control validate-alphabet',
-                            'placeholder' => 'Enter your region (optional)'
-                        ]); ?>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <?php echo $this->getHtml('label', [
-                            'for' => 'country',
-                            'class' => 'form-control-label'
-                        ]); ?>
-                        <?php echo $this->getHtml('dropdown', [
-                            'id' => 'country',
-                            'name' => "customer_account[country]",
-                            'class' => 'form-control required',
-                            'options' => [
-                                '' => 'Select Country',
-                                'India' => 'India',
-                                'United States' => 'United States',
-                                'Canada' => 'Canada',
-                                'United Kingdom' => 'United Kingdom',
-                                'Australia' => 'Australia',
-                                'Germany' => 'Germany',
-                                'France' => 'France',
-                                'Japan' => 'Japan',
-                                'China' => 'China'
-                            ]
-                        ]); ?>
-                    </div>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
 
-        <div class="form-footer">
+        <div class="form-foormr">
             <?php echo $this->getHtml('submit', [
                 'type' => 'submit',
                 'class' => 'btn btn-primary',

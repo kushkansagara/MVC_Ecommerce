@@ -56,12 +56,13 @@ class core_Model_Resource_Abstract
             $columns = implode(",", $columns);
 
             $sql = sprintf(
-                "UPDATE %s SET %s WHERE %s = %d",
+                "UPDATE `%s` SET %s WHERE %s = %d",
                 $this->_tableName,
                 $columns,
                 $this->_primaryKey,
                 $primaryId
             );
+            //echo $sql;
             return $this->getAdapter()->query($sql);
         } else {
             $columns = [];
@@ -82,6 +83,7 @@ class core_Model_Resource_Abstract
                 $columns,
                 $values
             );
+            //echo $sql;
             $id = $this->getAdapter()->insert($sql);
             $model->{$this->_primaryKey} = $id;
         }

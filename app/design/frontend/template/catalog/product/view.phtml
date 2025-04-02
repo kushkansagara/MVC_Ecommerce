@@ -148,16 +148,8 @@ $product = $this->getProductData();
                     quantity: $(".single-product-quantity-input").val()
                 },
                 dataType: "json",
-                // contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-                // beforeSend: function () {
-                //     console.log("Sending data:", {
-                //         product_id: $("#product_id").val(),
-                //         quantity: $(".single-product-quantity-input").val()
-                //     });
-                // },
                 success: function (response) {
                     alert("product added successfully");
-                    // console.log("Response received:", response);
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", xhr.responseText);
@@ -166,7 +158,6 @@ $product = $this->getProductData();
 
         });
 
-        // Update cart count
         function updateCartCount() {
             $.get("cart.php", function (response) {
                 if ($(".cart-count").length) {
@@ -175,7 +166,6 @@ $product = $this->getProductData();
             });
         }
 
-        // Function to show messages
         function showMessage(message, type) {
             const msgClass = type === "success" ? "success-message" : "error-message";
             const messageElement = $(`<div class="${msgClass}">${message}</div>`);

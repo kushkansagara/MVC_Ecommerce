@@ -9,19 +9,13 @@ class Customer_Model_Account extends Core_Model_Abstract
 
     public function _afterSave()
     {
-        // echo '<pre>';
         $data = $this->getData();
-        // echo '</pre>';
-        // die;
         $Customer_address = Mage::getModel('customer/account_address')
             ->getCollection()
             ->addFieldToFilter('customer_id', $this->getCustomerId())
             ->getData();
-
-        if ($Customer_address) {
-            $Customer_address[0]->data($this)
-                ->save();
-        } else {
+        $session = Mage::getSingleton('core/session');
+        if (empty($Customer_address)) {
             Mage::getModel('customer/account_address')
                 ->setData($data)
                 ->save();

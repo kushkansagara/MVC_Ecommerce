@@ -10,9 +10,11 @@ class Core_Block_Layout_Admin extends Core_Block_Layout
     }
     public function prepareChildren()
     {
-
         $header = $this->createBlock('page/header')->setTemplate('page/admin/header.phtml');
         $this->addChild('header', $header);
+
+        $message = $this->createBlock('core/message')->setTemplate('core/message.phtml');
+        $this->addChild('message', $message);
 
         $head = $this->createBlock('page/head')->setTemplate('page/admin/head.phtml');
         $this->addChild('head', $head);

@@ -1,5 +1,6 @@
 <?php $this->getChildHtml('order'); ?>
-<?php $order = $this->getOrder() ?>
+<?php $order = $this->getOrder();
+?>
 
 
 <!DOCTYPE html>
@@ -30,6 +31,8 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: 20px;
+            /* Add padding to ensure modal doesn't touch screen edges */
         }
 
         /* Modal container */
@@ -37,11 +40,47 @@
             background-color: #fff;
             width: 90%;
             max-width: 550px;
+            max-height: 85vh;
+            /* Limit height to 85% of viewport height */
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             position: relative;
             animation: fadeIn 0.4s ease-out;
+            overflow: hidden;
+            /* Hide overflow for parent container */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Modal content area - scrollable */
+        .modal-content {
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            padding-right: 10px;
+            /* Add some padding for scrollbar */
+            flex: 1;
+            scrollbar-width: thin;
+            /* For Firefox */
+        }
+
+        /* Scrollbar styling */
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }
 
         @keyframes fadeIn {
@@ -56,38 +95,79 @@
             }
         }
 
-        /* Header styling */
+        /* Header styling - fixed at top */
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 15px;
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 10;
+        }
+
         .modal-container h2 {
             color: #333;
             font-size: 24px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
             font-weight: 600;
+            margin: 0;
         }
 
         /* Close button */
         .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 18px;
-            color: #888;
-            cursor: pointer;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
             width: 30px;
             height: 30px;
+            background-color: #f44336;
+            color: white;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
             transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
         .close-btn:hover {
-            background-color: #f0f0f0;
-            color: #333;
+            background-color: #d32f2f;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Optional ripple effect */
+        .close-btn::after {
+            position: absolute;
+            content: "";
+            display: block;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform 0.5s, opacity 0.5s;
+        }
+
+        .close-btn:active::after {
+            transform: scale(0, 0);
+            opacity: 0.3;
+            transition: 0s;
         }
 
         /* Content styling */
@@ -152,11 +232,16 @@
             padding: 5px 0;
         }
 
-        .modal-container p:last-child {
+        /* Total row - sticky at the bottom for long content */
+        .total-row {
             margin-top: 15px;
             padding-top: 15px;
             border-top: 2px solid #f0f0f0;
             font-weight: 600;
+            position: sticky;
+            bottom: 0;
+            background-color: white;
+            z-index: 10;
         }
 
         .total-price {
@@ -172,13 +257,23 @@
 
         /* Responsive styling */
         @media (max-width: 768px) {
+            .overlay {
+                padding: 10px;
+            }
+
             .modal-container {
                 padding: 20px;
                 width: 95%;
+                max-height: 90vh;
+                /* Slightly more height on mobile */
             }
 
             .modal-container p strong {
                 min-width: 100px;
+            }
+
+            .modal-content {
+                padding-right: 5px;
             }
         }
     </style>
@@ -187,8 +282,11 @@
 <body>
     <div class="overlay" id="orderDetailsOverlay">
         <div class="modal-container">
-            <h2>Order Details</h2>
-            <button class="close-btn" onclick="closeModal()">X</button>
+            <div class="order-header">
+                <h2>Order Details</h2>
+                <a href="<?php echo $this->getUrl('*/order/list') ?>" class="close-btn">X</a>
+            </div>
+            <!-- <button class="close-btn" onclick="closeModal()">X</button> -->
             <p><strong>Order ID:</strong> ORD-2025-1001</p>
             <p><strong>Customer:</strong> Sarah Johnson</p>
             <p><strong>Date:</strong> March 17, 2025</p>

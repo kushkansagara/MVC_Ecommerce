@@ -1,0 +1,12 @@
+<?php
+$array = $this->getColumnValue();
+// print_r($array);
+?>
+
+<select>
+    <?php foreach ($array['options'] as $a): ?>
+        <option value="<?php echo $a; ?>" <?php echo ($a == $array['id']) ? 'selected' : ''; ?>>
+            <?php echo $a; ?>
+        </option>
+    <?php endforeach; ?>
+</select>

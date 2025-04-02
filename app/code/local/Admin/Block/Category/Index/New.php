@@ -32,7 +32,11 @@ class Admin_Block_Category_Index_New extends Core_Block_Template
     }
     public function getCategoryForEdit()
     {
-        $this->_editCategory = Mage::getModel('catalog/category')->load($_GET['id']);
+        if (isset($_GET['id'])) {
+            $this->_editCategory = Mage::getModel('catalog/category')->load($_GET['id']);
+        } else {
+            $this->_editCategory = null;
+        }
         return $this->_editCategory;
     }
 }

@@ -24,19 +24,20 @@
             --gray-800: #343a40;
         }
 
-        * {
+            {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        body {
+        /* body {
             background-color: #f5f7fa;
             color: #333;
-        }
+            
+        } */
 
-        .container {
+        .content-container {
             display: flex;
             min-height: 100vh;
         }
@@ -50,6 +51,7 @@
         }
 
         .sidebar-header {
+            /* position: fixed; */
             padding: 0 20px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -63,6 +65,12 @@
         .nav-menu {
             list-style: none;
             padding: 20px 0;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: white;
+            display: block;
         }
 
         .nav-item {
@@ -94,16 +102,16 @@
             overflow-y: auto;
         }
 
-        .header {
+        /* .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--gray-300);
-        }
+        } */
 
-        .search-container {
+        .search-content-container {
             display: flex;
             gap: 10px;
         }
@@ -162,7 +170,7 @@
             background-color: #138496;
         }
 
-        .filter-container {
+        .filter-content-container {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
@@ -396,7 +404,7 @@
         }
 
         /* Stats cards */
-        .stats-container {
+        .stats-content-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
@@ -452,9 +460,32 @@
             background-color: var(--info);
         }
 
+
+        .dropdown-menu {
+            min-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item {
+            transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+            font-weight: 500;
+            color: black;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #007bff;
+        }
+
+        .dropdown-item i {
+            margin-right: 8px;
+        }
+
+
         /* Responsive adjustments */
         @media (max-width: 992px) {
-            .container {
+            .content-container {
                 flex-direction: column;
             }
 
@@ -473,7 +504,7 @@
                 gap: 15px;
             }
 
-            .search-container {
+            .search-content-container {
                 width: 100%;
             }
 
@@ -481,13 +512,13 @@
                 width: 100%;
             }
 
-            .filter-container {
+            .filter-content-container {
                 flex-direction: column;
             }
         }
 
         @media (max-width: 768px) {
-            .stats-container {
+            .stats-content-container {
                 grid-template-columns: 1fr;
             }
 
@@ -500,68 +531,95 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="content-container">
         <div class="sidebar">
             <div class="sidebar-header">
-                <h2><i class="fas fa-store"></i> Admin Panel</h2>
+                <h3><i class="fas fa-store"></i> Admin Panel</h3>
             </div>
             <ul class="nav-menu">
-                <a href="<?php echo $this->getUrl('*/dashboard/index') ?>">
-                    <li class="nav-item active"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+                <a class="nav-item active" href="<?php echo $this->getUrl('*/dashboard/index') ?>">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
-                <a href="<?php echo $this->getUrl('*/order/index') ?>">
-                    <li class="nav-item "><i class="fas fa-shopping-cart"></i> Orders</li>
-                </a>
-
-                <li class="nav-item"><i class="fas fa-box"></i> Products</li>
-                <li class="nav-item"><i class="fas fa-users"></i> Customers</li>
+                <?php if ($this->getAllowedPermission('menu/order')): ?>
+                    <a class="nav-item" href="<?php echo $this->getUrl('*/order/list') ?>">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                <?php endif; ?>
+                <?php if ($this->getAllowedPermission('menu/category')): ?>
+                    <a class="nav-item" href="<?php echo $this->getUrl('*/category_index/list') ?>">
+                        <i class="fas fa-folder"></i> Category
+                    </a>
+                <?php endif; ?>
+                <?php if ($this->getAllowedPermission('menu/product')): ?>
+                    <a class="nav-item" href="<?php echo $this->getUrl('*/Product_index/list') ?>">
+                        <i class="fas fa-box"></i> Product
+                    </a>
+                <?php endif; ?>
+                <?php if ($this->getAllowedPermission('menu/customer')): ?>
+                    <li class="nav-item"><i class="fas fa-users"></i> Customers</li>
+                <?php endif; ?>
                 <li class="nav-item"><i class="fas fa-chart-line"></i> Reports</li>
-                <li class="nav-item"><i class="fas fa-cog"></i> Settings</li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Account Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Logout</a></li>
+                    </ul>
+                </li>
+
             </ul>
         </div>
 
-        <!-- Main Content -->
-        <!-- <div class="main-content">
-            <div class="header">
-                <h1>Dashboard</h1>
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="Search orders...">
-                    <button class="btn btn-primary" id="addOrderBtn"><i class="fas fa-plus"></i> New Order</button>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- Stats Cards -->
         <?php $this->getChildHtml(''); ?>
 
 
-        <!-- <div class="stat-card">
-                <div class="stat-icon icon-orders"><i class="fas fa-shopping-cart"></i></div>
-                <div class="stat-title">Total Orders</div>
-                <div class="stat-value">124</div>
-                <div class="stat-desc">+12% from last month</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon icon-revenue"><i class="fas fa-dollar-sign"></i></div>
-                <div class="stat-title">Total Revenue</div>
-                <div class="stat-value">$15,245</div>
-                <div class="stat-desc">+8% from last month</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon icon-pending"><i class="fas fa-clock"></i></div>
-                <div class="stat-title">Pending Orders</div>
-                cliv class="stat-value">18</div>
-                <div class="stat-desc">4 require attention</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon icon-delivered"><i class="fas fa-check-circle"></i></div>
-                <div class="stat-title">Delivered Orders</div>
-                <div class="stat-value">86</div>
-                <div class="stat-desc">+15% from last month</div>
-            </div> -->
 
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navItems = document.querySelectorAll('.nav-item');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    navItems.forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        const standaloneItems = document.querySelectorAll('.nav-menu > .nav-item');
+        standaloneItems.forEach(item => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                const dropdown = this.closest('.dropdown');
+                dropdown.classList.toggle('show');
+
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
