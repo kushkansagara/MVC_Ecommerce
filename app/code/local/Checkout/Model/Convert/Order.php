@@ -5,10 +5,6 @@ class Checkout_Model_Convert_Order
     {
 
         $cartData = $cart->getData();
-
-        echo '<pre>';
-        print_r($cartData);
-        echo '</pre>';
         unset($cartData['cart_id']);
 
         $order = Mage::getModel('sales/order')
@@ -17,7 +13,6 @@ class Checkout_Model_Convert_Order
         // die;
         $order_id = $order
             ->getOrderId();
-        echo $order_id;
 
         $items = $cart
             ->getItemCollection()
@@ -50,6 +45,8 @@ class Checkout_Model_Convert_Order
             ->setData($Shippingaddress)
             ->setOrderId($order_id)
             ->save();
+
+        return $order_id;
     }
 }
 ?>

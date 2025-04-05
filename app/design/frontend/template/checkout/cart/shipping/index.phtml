@@ -82,12 +82,12 @@
     <div class="coupon-container">
         <h2 class="section-title">Have a Coupon?</h2>
         <div class="coupon-form">
-            <form action="<?php echo $this->getUrl('*/*/applyCoupon') ?>" method="POST">
-                <input type="text" name='coupon_code' class="coupon-input" placeholder="Enter coupon code"
-                    id="coupon-code"
-                    value="<?php echo !empty($cartData->getCouponCode()) ? $cartData->getCouponCode() : "" ?>">
-                <button class="coupon-button">Apply Coupon</button>
-            </form>
+            <input type="text" name="coupon_code" class="coupon-input" placeholder="Enter coupon code" id="coupon-code"
+                value="<?php echo !empty($cartData->getCouponCode()) ? $cartData->getCouponCode() : '' ?>">
+
+            <button class="coupon-button" id="coupon_button">Apply Coupon</button>
+
+            <p id="couponError" style="color: red; margin-top: 5px;"></p>
         </div>
         <?php if (!empty($cartData) && $cartData->getCouponDiscount() > 0): ?>
         <div class="active-coupon">
@@ -101,13 +101,11 @@
             </button>
         </div>
         <?php else: ?>
-        <!-- <div class="coupon-error">
-                Invalid Coupon Code Please Write Valid Coupon Code.
-            </div> -->
+
         <?php endif; ?>
 
     </div>
-    <div class="shipping-payment-container">
+    <div class="shipping-payment-container-summary">
         <h2 class="section-title">Order Summary</h2>
 
         <div class="order-summary">
@@ -179,5 +177,52 @@ function valid() {
         isValid = false;
     }
     return isValid;
+
+
 }
+$(document).ready(function() {
+    $('#coupon_button').click(function(e) {
+        e.preventDefault();
+        const code = $('#coupon-code').val().trim();
+        if (code === '') {
+            $("#couponError").text("Please enter a coupon code.");
+            return;
+        }
+        $.ajax({
+            url: "http://localhost/mvc_main/checkout/cart_shipping/applyCoupon",
+            type: "POST",
+            data: {
+                coupon_code: code
+            },
+            success: function(response) {
+                let update = $(response).find(".active-coupon").html();
+                $(".active-coupon").empty().html(update);
+                let extractedContent = $(response).find(
+                    ".shipping-payment-container-summary").html();
+                $(".shipping-payment-container-summary").empty().html(extractedContent);
+                // try {
+                //     let data = JSON.parse(response);
+                //     if (data.success) {
+                //         // location.reload();
+                //         let extractedContent = $(response).find(
+                //                 ".shipping-payment-container")
+                //             .html();
+                //         $(".shipping-payment-container").empty().html(extractedContent);
+                //         let update = $(response).find(".active-coupon").html();
+                //         $(".active-coupon").empty().html(update);
+                //     } else {
+                //         $("#couponError").text(data.message);
+                //     }
+                // } catch (error) {
+                //     console.log("Error parsing JSON:", error);
+                //     $("#couponError").text("Unexpected server response.");
+                // }
+            },
+            error: function(xhr) {
+                console.log("Error:", xhr.responseText);
+                $("#couponError").text("Something went wrong. Please try again.");
+            }
+        });
+    });
+});
 </script>

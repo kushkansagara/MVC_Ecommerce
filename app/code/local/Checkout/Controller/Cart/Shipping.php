@@ -39,11 +39,13 @@ class Checkout_Controller_Cart_Shipping extends Core_Controller_Front_Action
                 ->getCart()
                 ->setCouponCode('')
                 ->setCouponDiscount($finalDiscount)->save();
+            echo json_encode(["success" => false, "message" => "Coupon Code not Found"]);
         } else {
             $cart = Mage::getSingleton('checkout/session')
                 ->getCart()
                 ->setCouponCode($code['coupon_code'])
                 ->setCouponDiscount($finalDiscount)->save();
+            // echo json_encode(["success" => true, "message" => "Coupon Applied!"]);
         }
         $this->redirect('checkout/cart_shipping/index');
     }

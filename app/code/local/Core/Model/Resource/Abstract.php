@@ -83,7 +83,6 @@ class core_Model_Resource_Abstract
                 $columns,
                 $values
             );
-            //echo $sql;
             $id = $this->getAdapter()->insert($sql);
             $model->{$this->_primaryKey} = $id;
         }

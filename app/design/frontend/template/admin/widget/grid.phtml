@@ -2,6 +2,9 @@
 $ProductList = $this->getCollection()->getData();
 ?>
 <div class="container-fluid">
+    <div>
+        <a href="<?php echo $this->getUrl('*/*/new') ?>">add new Item</a>
+    </div>
     <div class="row">
         <?php $this->getChildHtml('csv'); ?>
         <?php $this->getChildHtml('toolbar'); ?>

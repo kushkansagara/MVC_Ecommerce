@@ -4,7 +4,6 @@ class Checkout_Controller_Cart extends Core_Controller_Customer_Action
 {
     public function indexAction()
     {
-        // echo get_class() . "----" . __FUNCTION__;
         $layout = Mage::getBlock('Core/Layout');
         $index = $layout->createBlock('Checkout/Cart_Index')
             ->setTemplate('checkout/cart/index.phtml');
