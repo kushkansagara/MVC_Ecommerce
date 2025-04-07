@@ -5,7 +5,7 @@ $ProductList = $this->getCollection()->getData();
     <div>
         <a href="<?php echo $this->getUrl('*/*/new') ?>">add new Item</a>
     </div>
-    <div class="row">
+    <div class="row" id="grid-header">
         <?php $this->getChildHtml('csv'); ?>
         <?php $this->getChildHtml('toolbar'); ?>
     </div>
@@ -17,16 +17,22 @@ $ProductList = $this->getCollection()->getData();
                         <th><?php echo $column->getData()['lable']; ?></th>
                     <?php endforeach; ?>
                 </tr>
-                <tr>
+                <!-- <form> -->
+                <tr id="filter-row">
                     <?php foreach ($this->_columns as $filter): ?>
                         <td>
+                            <?php //Mage::log($filter->getFilter()) ?>
                             <?php echo $filter->getFilter()->render(); ?>
                         </td>
                     <?php endforeach; ?>
                 </tr>
+                <!-- <button type="submit" id="filter-button">
+                    filter
+                </button> -->
+                <!-- </form> -->
 
             </thead>
-            <tbody>
+            <tbody id="grid-body">
                 <?php foreach ($ProductList as $product): ?>
                     <tr>
                         <?php foreach ($this->_columns as $column): ?>
@@ -43,3 +49,39 @@ $ProductList = $this->getCollection()->getData();
         </div>
     </table>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $(document).on('input', 'input, select, textarea', function (e) {
+            e.preventDefault();
+
+            let filterData = {};
+            $('#filter-row').find('input, select').each(function () {
+                let name = $(this).attr('name');
+                let value = $(this).val();
+                if (name && value) {
+                    filterData[name] = value;
+                }
+            });
+
+            let queryString = $.param(filterData);
+            let fullUrl = '?' + queryString;
+            window.history.pushState({}, '', fullUrl);
+
+            $.ajax({
+                url: 'http://localhost' + window.location.pathname,
+                type: 'GET',
+                data: filterData,
+                success: function (response) {
+                    // console.log(response);
+                    $("#grid-body").html($(response).find("#grid-body").html());
+                    $("#grid-header").html($(response).find("#grid-header").html());
+
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    })
+</script>

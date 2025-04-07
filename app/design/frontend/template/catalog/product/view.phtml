@@ -1,5 +1,6 @@
 <?php
 $product = $this->getProductData();
+$reviews = $this->getProductReviews();
 ?>
 <div class="container-single-product">
     <div class="single-product-container">
@@ -55,25 +56,24 @@ $product = $this->getProductData();
             </div>
 
             <div class="single-product-actions">
-                <form method="post" id="add-to-cart-form">
-                    <input type="hidden" id="product_id" name="product_id"
-                        value="<?php echo isset($product) ? htmlspecialchars($product->getProductId()) : ''; ?>">
-                    <div class="single-product-quantity-selector">
-                        <h2>Quantity: </h2>
-                        <input type="number" name="quantity" class="single-product-quantity-input" required value="1"
-                            min="1">
-                    </div>
-                    <button class="single-product-add-to-cart" type="submit">
-                        <svg class="single-product-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <circle cx="9" cy="21" r="1"></circle>
-                            <circle cx="20" cy="21" r="1"></circle>
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                        </svg>
-                        Add to Cart
-                    </button>
-                </form>
+                <!-- <form method="post" id="add-to-cart-form"> -->
+                <input type="hidden" id="product_id" name="product_id"
+                    value="<?php echo isset($product) ? htmlspecialchars($product->getProductId()) : ''; ?>">
+                <div class="single-product-quantity-selector">
+                    <h2>Quantity: </h2>
+                    <input type="number" name="quantity" class="single-product-quantity-input" required value="1"
+                        min="1">
+                </div>
+                <button class="single-product-add-to-cart" type="submit">
+                    <svg class="single-product-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Add to Cart
+                </button>
+                <!-- </form> -->
 
                 <button class="single-product-wishlist-btn">
                     <svg class="single-product-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -112,6 +112,7 @@ $product = $this->getProductData();
                 make it easy to adjust volume, skip tracks, or answer calls.</p>
         </div>
 
+
         <div id="specifications" class="single-product-tab-content">
             <table style="width:100%; border-collapse: collapse;">
                 <?php
@@ -126,6 +127,111 @@ $product = $this->getProductData();
                 ?>
             </table>
         </div>
+
+
+        <div id="reviews" class="tab-content">
+            <div class="single-product-add-review">
+                <h3 class="single-product-review-title">Write a Review</h3>
+                <form id="review-form" method="post" action="<?php echo $this->getUrl('*/*/addReview'); ?>">
+                    <input type="hidden" name="catalog_product_review[product_id]"
+                        value="<?php echo $product->getProductId(); ?>">
+
+                    <div class="single-product-rating-select">
+                        <label for="rating">Your Rating:</label>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="catalog_product_review[rating]" value="5" required>
+                            <label for="star5">★</label>
+                            <input type="radio" id="star4" name="catalog_product_review[rating]" value="4">
+                            <label for="star4">★</label>
+                            <input type="radio" id="star3" name="catalog_product_review[rating]" value="3">
+                            <label for="star3">★</label>
+                            <input type="radio" id="star2" name="catalog_product_review[rating]" value="2">
+                            <label for="star2">★</label>
+                            <input type="radio" id="star1" name="catalog_product_review[rating]" value="1">
+                            <label for="star1">★</label>
+                        </div>
+                    </div>
+
+                    <!-- <div class="form-group">
+                        <label for="reviewer_name">Your Name:</label>
+                        <input type="text" id="reviewer_name" name="reviewer_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="review_title">Review Title:</label>
+                        <input type="text" id="review_title" name="review_title" required>
+                    </div> -->
+
+                    <div class="form-group">
+                        <label for="review_content">Your Review:</label>
+                        <textarea id="review_content" name="catalog_product_review[review]" rows="5"
+                            required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-review-btn">Submit Review</button>
+                </form>
+            </div>
+            <?php foreach ($reviews as $review): ?>
+                <div style="margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <div
+                            style="width: 50px; height: 50px; border-radius: 50%; background-color: #3a7bd5; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 15px;">
+                            <?php echo ucfirst($review->getFn()[0]) . '' . ucfirst($review->getLn()[0]) ?>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;"><?php echo ucfirst($review->getFn()) ?>
+                                <?php echo ucfirst($review->getLn()) ?>
+                            </div>
+                            <div style="display: flex;">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <?php if ($i <= $review->getRating()): ?>
+                                        <div style="color: #f9a825; margin: 5px 0;">★</div>
+                                    <?php else: ?>
+                                        <div style="color: #f9a825; margin: 5px 0;">☆</div>
+                                    <?php endif; ?>
+                                <?php endfor; ?>
+                            </div>
+                            <?php
+                            $date = new DateTime($review->getCreatedAt());
+                            $formatted = $date->format('F d, Y');
+                            ?>
+                            <div style="font-size: 0.8em; color: #777;">Verified Purchase | <?php echo $formatted ?></div>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 10px;"><?php echo $review->getReview(); ?></p>
+                </div>
+            <?php endforeach; ?>
+            <!-- <div style="margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-weight: 600;">John Doe</div>
+                        <div style="color: #f9a825; margin: 5px 0;">★★★★★</div>
+                        <div style="font-size: 0.8em; color: #777;">Verified Purchase | October 15, 2024</div>
+                    </div>
+                </div>
+                <p style="margin-bottom: 10px;">These headphones are amazing! The sound quality is top-notch, and
+                    the noise cancellation works perfectly. I use them during my commute, and they block out all the
+                    subway noise. Battery life is impressive too - I only charge them once a week.</p>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div
+                        style="width: 50px; height: 50px; border-radius: 50%; background-color: #00d2ff; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 15px;">
+                        AS</div>
+                    <div>
+                        <div style="font-weight: 600;">Alice Smith</div>
+                        <div style="color: #f9a825; margin: 5px 0;">★★★★☆</div>
+                        <div style="font-size: 0.8em; color: #777;">Verified Purchase | September 28, 2024</div>
+                    </div>
+                </div>
+                <p style="margin-bottom: 10px;">Great headphones overall. The sound quality is excellent and they're
+                    very comfortable to wear for long periods. The only reason I'm giving 4 stars instead of 5 is
+                    that I occasionally experience connectivity issues when I'm more than 20 feet away from my
+                    device.</p>
+            </div> -->
+        </div>
+
     </div>
 </div>
 
@@ -133,13 +239,8 @@ $product = $this->getProductData();
 
 <script>
     $(document).ready(function () {
-        $("#add-to-cart-form").on("submit", function (e) {
+        $(document).on('click', '.single-product-add-to-cart', function (e) {
             e.preventDefault();
-
-            // const productId = $("#product_id").val();
-            // const quantity = $(".single-product-quantity-input").val();
-
-
             $.ajax({
                 url: "http://localhost/mvc_main/checkout/cart/add",
                 type: "POST",
@@ -149,7 +250,10 @@ $product = $this->getProductData();
                 },
                 dataType: "json",
                 success: function (response) {
-                    alert("product added successfully");
+                    console.log(response);
+                    $(".cart-count").empty().html($(response).find(".cart-count").html());
+
+                    // alert("product added successfully");
                 },
                 error: function (xhr, status, error) {
                     console.log("Error:", xhr.responseText);

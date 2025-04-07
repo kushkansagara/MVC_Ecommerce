@@ -9,6 +9,7 @@ class Admin_Block_Category_Index_List extends Admin_Block_Widget_Grid
             'lable' => 'category id',
             'data_index' => 'category_id',
             'filter' => 'number',
+            // 'name' => 'category_id',
 
         ]);
         $this->addColumn('name', [
@@ -16,6 +17,7 @@ class Admin_Block_Category_Index_List extends Admin_Block_Widget_Grid
             'lable' => 'name',
             'data_index' => 'name',
             'filter' => 'text',
+            // 'name' => 'catalog_category[name]'
 
         ]);
         $this->addColumn('description', [
@@ -23,7 +25,6 @@ class Admin_Block_Category_Index_List extends Admin_Block_Widget_Grid
             'lable' => 'description',
             'data_index' => 'description',
             'filter' => 'text',
-
         ]);
         $this->addColumn('edit', [
             'render' => 'link',
@@ -31,7 +32,6 @@ class Admin_Block_Category_Index_List extends Admin_Block_Widget_Grid
             'action' => 'new',
             'callback' => 'getEditUrl',
             'class' => 'fa fa-edit'
-            // 'filter' => 'text',
 
         ]);
         $this->addColumn('delete', [
@@ -40,11 +40,26 @@ class Admin_Block_Category_Index_List extends Admin_Block_Widget_Grid
             'action' => 'delete',
             'callback' => 'getDeleteUrl',
             'class' => 'fa fa-trash text-danger'
-            // 'filter' => 'text',
 
         ]);
+        $get_data = $this->getRequest()->getQuery();
         $category = Mage::getModel('catalog/category')->getCollection();
+        if (!empty($get_data['category_id-from']) && !empty($get_data['category_id-to'])) {
+            $category->addFieldToFilter('category_id', [
+                'BETWEEN' => [$get_data['category_id-from'], $get_data['category_id-to']]
+            ]);
+        }
+        if (!empty($get_data['name'])) {
+            $category->addFieldToFilter('name', ['like' => '%' . $get_data['name'] . '%']);
+        }
+
+        if (!empty($get_data['description'])) {
+            $category->addFieldToFilter('description', ['like' => '%' . $get_data['description'] . '%']);
+        }
+
+        // Mage::log($category->getData());
         $this->setCollection($category);
+
         parent::__construct();
     }
 

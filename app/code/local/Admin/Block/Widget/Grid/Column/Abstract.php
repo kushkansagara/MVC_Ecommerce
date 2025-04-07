@@ -35,8 +35,8 @@ class Admin_Block_Widget_Grid_Column_Abstract
     {
         if (!empty($this->getData()['filter'])) {
             $filter = $this->getData()['filter'];
-            return Mage::getBlock("Admin/Widget_Grid_Filter_{$filter}");
-            // $filterBlock->toHtml();
+            return Mage::getBlock("Admin/Widget_Grid_Filter_{$filter}")
+                ->setData($this->getData());
         } else {
             return Mage::getBlock("Admin/Widget_Grid_Filter_Abstract");
         }

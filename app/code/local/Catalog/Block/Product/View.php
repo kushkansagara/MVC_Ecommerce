@@ -28,5 +28,24 @@ class Catalog_Block_Product_View extends Core_Block_Template
         $element = new $classname($data);
         return $element->render();
     }
+
+    public function getProductReviews()
+    {
+        $product_id = $this->getRequest()->getQuery('id');
+        $review = Mage::getModel('catalog/product_review')
+            ->getCollection()
+            ->joinInner(['customer' => 'customer_account'], 'customer.customer_id = main_table.customer_id', ['fn' => 'first_name', 'ln' => 'last_name'])
+            ->orderBy(['created_at DESC'])
+            ->addFieldToFilter('product_id', $product_id);
+
+        return $review->getData();
+    }
+
+    // public function getUser($id)
+    // {
+    //     $user = Mage::getModel('customer/account')
+    //         ->load($id);
+    //     return $user;
+    // }
 }
 ?>

@@ -154,7 +154,6 @@ $endPage = min($totalPages, $startPage + 4);
 </style>
 <div class="admin-toolbar">
     <h1>Records Management</h1>
-
     <div class="toolbar-container">
         <div class="records-info">
             <span>Showing <?= min($totalRecords, ($currentPage - 1) * $currentLimit + 1) ?> to
@@ -165,7 +164,7 @@ $endPage = min($totalPages, $startPage + 4);
             <div class="pagination-controls">
                 <div class="limit-selector">
                     <label for="limit">Show:</label>
-                    <select name="limit" id="limit" onchange="this.form.submit()">
+                    <select name="limit" id="limit">
                         <option value="2" <?= $currentLimit == 2 ? 'selected' : '' ?>>2</option>
                         <option value="5" <?= $currentLimit == 5 ? 'selected' : '' ?>>5</option>
                         <option value="10" <?= $currentLimit == 10 ? 'selected' : '' ?>>10</option>
@@ -175,7 +174,7 @@ $endPage = min($totalPages, $startPage + 4);
                 </div>
                 <div class="page-navigation">
                     <?php if ($currentPage > 1): ?>
-                        <a href="#" onclick="setPage(1)" class="page-link first-page" title="First Page">«</a>
+                        <a href="#" data-page="<?= 1 ?>" class="page-link first-page" title="First Page">«</a>
                         <a href="#" onclick="setPage(<?= $currentPage - 1 ?>)" class="page-link prev-page"
                             title="Previous Page">‹</a>
                     <?php else: ?>
@@ -187,7 +186,7 @@ $endPage = min($totalPages, $startPage + 4);
                         <?php if ($i == $currentPage): ?>
                             <span class="page-link current"><?= $i ?></span>
                         <?php else: ?>
-                            <a href="#" onclick="setPage(<?= $i ?>)" class="page-link"><?= $i ?></a>
+                            <a href="#" class="page-link" data-page="<?= $i ?>"><?= $i ?></a>
                         <?php endif; ?>
                     <?php endfor; ?>
 
@@ -208,10 +207,49 @@ $endPage = min($totalPages, $startPage + 4);
 </div>
 
 <script>
-    function setPage(page) {
-        event.preventDefault();
-        document.getElementById('page-input').value = page;
-        document.getElementById('pagination-form').submit();;
+    $(document).ready(function () {
+        $(document).on('click', '.page-link', function (e) {
+            e.preventDefault();
+            let page = $(this).data('page');
+            if (page) {
+                $('#page-input').val(page);
+                loadPaginationData();
+            }
+        });
+    });
+    $('#limit').on('change', function () {
+        $('#page-input').val(1);
+        loadPaginationData();
+    });
 
+    function loadPaginationData() {
+        const paginationForm = $('#pagination-form');
+        const filterFields = $('#filter-row').find('input, select');
+
+        let filterData = paginationForm.serializeArray();
+        console.log(filterData);
+        filterFields.each(function () {
+            filterData.push({
+                name: $(this).attr('name'),
+                value: $(this).val()
+            });
+        });
+
+        const data = $.param(filterData);
+        const url = paginationForm.attr('action');
+        window.history.pushState({}, '', url + '?' + data);
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            data: data,
+            success: function (response) {
+                $(".toolbar-container").html($(response).find(".toolbar-container").html());
+                $("#grid-body").html($(response).find("#grid-body").html());
+            },
+            error: function (xhr, status, error) {
+                console.error('Pagination AJAX error:', error);
+            }
+        });
     }
 </script>

@@ -4,7 +4,7 @@ $total = $this->Subtotal();
 $cart = $this->getCart();
 ?>
 
-<div class="container">
+<div class="container" id="cart_page">
     <h1 class="page-title">Your Shopping Cart</h1>
 
     <div class="cart-container">
@@ -51,29 +51,30 @@ $cart = $this->getCart();
                         <div class="item-price">₹<?php echo number_format($productData->getPrice(), 2); ?></div>
                         <div>
                             <div class="quantity-control">
-                                <form action="<?php echo $this->getUrl('*/*/update') ?>" method="post">
-                                    <input type="hidden" name="item_id" value="<?php echo $product->getItemId(); ?>">
-                                    <button class="quantity-btn"
-                                        onclick="decrementQuantity(<?php echo $product->getItemId(); ?>)">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <input type="number" name="quantity" min="1"
-                                        value="<?php echo $product->getProductQuantity(); ?>" class="quantity-input"
-                                        data-id="<?php echo $product->getItemId(); ?>"
-                                        id="quantity-<?php echo $product->getItemId(); ?>"
-                                        onchange="updateQuantity(<?php echo $product->getItemId(); ?>, this.value)">
-                                    <button class="quantity-btn"
-                                        onclick="incrementQuantity(<?php echo $product->getItemId(); ?>)">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </form>
+                                <input type="hidden" name="item_id" value="<?php echo $product->getItemId(); ?>"
+                                    class="item-id">
+
+                                <button type="button" class="quantity-btn minus-btn"
+                                    data-item-id="<?php echo $product->getItemId(); ?>">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+
+                                <input type="number" name="quantity" min="1"
+                                    value="<?php echo $product->getProductQuantity(); ?>" class="quantity-input"
+                                    data-id="<?php echo $product->getItemId(); ?>"
+                                    id="quantity-<?php echo $product->getItemId(); ?>">
+
+                                <button type="button" class="quantity-btn plus-btn"
+                                    data-item-id="<?php echo $product->getItemId(); ?>">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="item-total">
                             ₹<?php echo number_format($product->getSubtotal()); ?>
                         </div>
                         <div>
-                            <a href="<?php echo $this->getUrl('*/*/remove') ?>/?id=<?php echo $product->getItemId() ?>">
+                            <a class="remove_cart" data-item-id="<?php echo $product->getItemId(); ?>">
                                 <i class="fas fa-times"></i>
                             </a>
                         </div>
@@ -96,3 +97,77 @@ $cart = $this->getCart();
     <?php endif ?>
     </form>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // Quantity increment
+        $(document).on('click', '.plus-btn', function (e) {
+            e.preventDefault();
+            let itemId = $(this).data('item-id');
+            let $input = $('#quantity-' + itemId);
+            let quantity = parseInt($input.val()) || 1;
+            $input.val(quantity + 1);
+            sendQuantityUpdate(itemId, quantity + 1);
+        });
+
+        // Quantity decrement
+        $(document).on('click', '.minus-btn', function (e) {
+            e.preventDefault();
+            let itemId = $(this).data('item-id');
+            let $input = $('#quantity-' + itemId);
+            let quantity = parseInt($input.val()) || 1;
+            if (quantity > 1) {
+                $input.val(quantity - 1);
+                sendQuantityUpdate(itemId, quantity - 1);
+            }
+        });
+
+        // Quantity input change
+        $(document).on('change', '.quantity-input', function () {
+            let itemId = $(this).data('id');
+            let quantity = parseInt($(this).val()) || 1;
+            if (quantity < 1) {
+                quantity = 1;
+                $(this).val(quantity);
+            }
+            sendQuantityUpdate(itemId, quantity);
+        });
+
+        // Remove item from cart
+        $(document).on('click', '.remove_cart', function () {
+            let itemId = $(this).data('item-id');
+            $.ajax({
+                url: 'http://localhost/mvc_main/checkout/cart/remove',
+                type: 'GET',
+                data: {
+                    id: itemId
+                },
+                success: function (response) {
+                    $("#cart-items").html($(response).find("#cart-items").html());
+                    $(".summary-row").html($(response).find(".summary-row").html());
+                },
+                error: function (xhr) {
+                    console.log("Error:", xhr.responseText);
+                }
+            });
+        });
+
+        function sendQuantityUpdate(itemId, quantity) {
+            $.ajax({
+                url: 'http://localhost/mvc_main/checkout/cart/update',
+                type: 'POST',
+                data: {
+                    item_id: itemId,
+                    quantity: quantity
+                },
+                success: function (response) {
+                    $("#cart-items").html($(response).find("#cart-items").html());
+                    $(".summary-row").html($(response).find(".summary-row").html());
+                },
+                error: function (xhr) {
+                    console.log("Error:", xhr.responseText);
+                }
+            });
+        }
+    });
+</script>

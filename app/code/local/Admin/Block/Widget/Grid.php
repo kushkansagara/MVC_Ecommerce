@@ -36,17 +36,13 @@ class Admin_Block_Widget_Grid extends Core_Block_Template
     }
     public function getCollection()
     {
+        $get_data = $this->getRequest()->getQuery();
+        // print_r($get_data);
+
         return $this->_collection;
+        // ->addFieldToFilter('category_id', ['BETWEEN' => [$get_data['category_id-from'], $get_data['category_id-to']]]);
     }
-    // public function renderFilter($data)
-    // {
-    //     if (!empty($data['filter'])) {
-    //         $filter = $data['filter'];
-    //         $filterBlock = Mage::getBlock("Admin/Widget_Grid_Filter_{$filter}");
-    //         $filterBlock->setArray($data);
-    //         $filterBlock->toHtml();
-    //     }
-    // }
+
     public function getValue($data)
     {
         echo $data;

@@ -1,10 +1,26 @@
-<form action="<?php echo $this->getUrl('*/*/list') ?>" method="GET">
-    <input type="hidden" name="limit"
-        value="<?php echo !empty($this->getRequest()->getQuery('limit')) ? $this->getRequest()->getQuery('limit') : 5; ?>">
-    <input type="hidden" name="page"
-        value="<?php echo !empty($this->getRequest()->getQuery('page')) ? $this->getRequest()->getQuery('page') : 1; ?>">
+<form id="export-form" action="<?= $this->getUrl('*/*/list') ?>" method="GET">
     <button type="submit" name="export" value="export">Export in CSV</button>
 </form>
+<script>
+    $(document).ready(function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const exportForm = $('#export-form');
+
+        // Loop through all current GET parameters
+        for (const [key, value] of urlParams.entries()) {
+            // Avoid duplicates if export button already sets this
+            if (key !== 'export') {
+                exportForm.append(
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: key,
+                        value: value
+                    })
+                );
+            }
+        }
+    });
+</script>
 
 <style>
     /* Export Form & Button Styling */

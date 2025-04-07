@@ -1,9 +1,7 @@
 <?php
-
-use PayPal\Rest\ApiContext;
-
-class Catalog_Controller_Product
+class Catalog_Controller_Product extends Core_Controller_Customer_Action
 {
+    protected $_allowedActions = ['view', 'list'];
 
     public function viewAction()
     {
@@ -24,64 +22,78 @@ class Catalog_Controller_Product
         $layout->toHtml();
     }
 
+    public function addReviewAction()
+    {
+        $data = $this->getRequest()->getParams();
+        $customer_id = $this->getSession()->get('customer_id');
+        $review = Mage::getModel('catalog/product_review')
+            ->setData($data['catalog_product_review'])
+            ->setCustomerId($customer_id)
+            ->save();
+    }
     public function TestAction()
     {
 
-        $paypal = new Paypal_Init();
-        $paypal = $paypal->getApiContext();
-        echo "<pre>";
-        print_r($paypal);
+        $temp = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->select(['count(*)' => 'total']);
+
+        echo $temp->prepareQuery();
+        //     $paypal = new Paypal_Init();
+        //     $paypal = $paypal->getApiContext();
+        //     echo "<pre>";
+        //     print_r($paypal);
 
 
-        $payer = new PayPal\Api\Payer();
+        //     $payer = new PayPal\Api\Payer();
 
-        $payer->setPaymentMethod('paypal');
-
-
-
-        $amount = new PayPal\Api\Amount();
-
-        $amount->setTotal('10.00')->setCurrency('USD');
-
-
-
-        $transaction = new PayPal\Api\Transaction();
-
-        $transaction->setAmount($amount)->setDescription('Payment for Order #1234');
+        //     $payer->setPaymentMethod('paypal');
 
 
 
-        $redirectUrls = new PayPal\Api\RedirectUrls();
+        //     $amount = new PayPal\Api\Amount();
 
-        $redirectUrls->setReturnUrl("http://localhost/kush/paypal_success.php")
-
-            ->setCancelUrl("http://yourwebsite.com/paypal_cancel.php");
+        //     $amount->setTotal('10.00')->setCurrency('USD');
 
 
 
-        $payment = new PayPal\Api\Payment();
+        //     $transaction = new PayPal\Api\Transaction();
 
-        $payment->setIntent('sale')
-
-            ->setPayer($payer)
-
-            ->setRedirectUrls($redirectUrls)
-
-            ->setTransactions([$transaction]);
+        //     $transaction->setAmount($amount)->setDescription('Payment for Order #1234');
 
 
 
-        try {
+        //     $redirectUrls = new PayPal\Api\RedirectUrls();
 
-            $payment->create($paypal);
+        //     $redirectUrls->setReturnUrl("http://localhost/kush/paypal_success.php")
 
-            header("Location: " . $payment->getApprovalLink());
+        //         ->setCancelUrl("http://yourwebsite.com/paypal_cancel.php");
 
-        } catch (Exception $ex) {
 
-            echo "Error: " . $ex->getMessage();
 
-        }
+        //     $payment = new PayPal\Api\Payment();
+
+        //     $payment->setIntent('sale')
+
+        //         ->setPayer($payer)
+
+        //         ->setRedirectUrls($redirectUrls)
+
+        //         ->setTransactions([$transaction]);
+
+
+
+        //     try {
+
+        //         $payment->create($paypal);
+
+        //         header("Location: " . $payment->getApprovalLink());
+
+        //     } catch (Exception $ex) {
+
+        //         echo "Error: " . $ex->getMessage();
+
+        //     }
 
 
     }

@@ -14,10 +14,12 @@ class Checkout_Controller_Cart extends Core_Controller_Customer_Action
     }
     public function updateAction()
     {
+
         $items = $this->getRequest()->getParams();
         $cartItem = Mage::getSingleton('checkout/session')
             ->getCart()->updateItem($items['item_id'], $items['quantity'])->save();
         $this->redirect('checkout/cart/index');
+
     }
     public function removeAction()
     {
