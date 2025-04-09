@@ -33,6 +33,18 @@ class Catalog_Controller_Product extends Core_Controller_Customer_Action
     }
     public function TestAction()
     {
+        $a = Mage::getModel('catalog/product')
+            ->getCollection()
+            ->innerJoin('catalog_category', "catalog_category.category_id=main_table.category_id", [])
+            ->select(['main_table.category_id' => "cid", 'COUNT(main_table.product_id)' => 'total'])
+            ->groupBy(["main_table.category_id"])
+            ->having('total', ['>' => '2'])
+            ->addFieldToFilter("main_table.category_id", ['>' => 1])
+            ->orderBy(['total DESC'])
+            ->limit('1', '2')
+            ->prepareQuery();
+        Mage::log($a);
+
 
         $temp = Mage::getModel('catalog/product')
             ->getCollection()

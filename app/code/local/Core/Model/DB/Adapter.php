@@ -31,7 +31,6 @@ class Core_Model_DB_Adapter
 
     public function fetchAll($query)
     {
-        // echo $query;
         $result = mysqli_query($this->connect(), $query);
         $data = [];
         while ($row = $result->fetch_assoc()) {
@@ -41,7 +40,6 @@ class Core_Model_DB_Adapter
     }
     public function fetchCol($query)
     {
-        // echo $query;
         $result = mysqli_query($this->connect(), $query);
         $data = [];
         while ($row = $result->fetch_column()) {
@@ -55,8 +53,6 @@ class Core_Model_DB_Adapter
         while ($row = $result->fetch_assoc()) {
             return $row;
         }
-        // $data = mysqli_fetch_row($result);
-        // return $data;
     }
     public function insert($query)
     {

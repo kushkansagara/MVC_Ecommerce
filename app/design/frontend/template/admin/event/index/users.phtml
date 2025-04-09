@@ -1,0 +1,62 @@
+<?php
+$users = $this->getUsers();
+$event = $this->getEventName();
+
+?>
+<style>
+    th,
+    td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+</style>
+<h1>
+    <?php echo $event->getTitle(); ?>
+</h1>
+<div>
+    <div>
+        total number of users: <?php echo $this->totalUser(); ?>
+        <br>
+        Pending number of users: <?php echo $this->PendingUser(); ?>
+        <br>
+        Approved number of users: <?php echo $this->ApprovedUser(); ?>
+        <br>
+        Rejected number of users: <?php echo $this->RejectedUser(); ?>
+    </div>
+    <br>
+    <br>
+    <div id="table-data">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User id</th>
+                    <th>event id</th>
+                    <th>status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($users as $user): ?>
+                    <tr>
+                        <td class="id"><?php echo $user->getId(); ?></td>
+                        <td><?php echo $user->getUserId() ?></td>
+                        <td class="event_id"><?php echo $user->getEventId() ?></td>
+                        <!-- <td><?php //echo $user->getStatus() ?></td> -->
+                        <?php if ($user->getStatus() == 'Pending'): ?>
+                            <td>
+                                <button class="changestatus" value="Approved">Approved</button>
+                                <button class="changestatus" value="Rejected">Rejected</button>
+                            </td>
+                        <?php else: ?>
+
+                            <td><?php echo $user->getStatus() ?></td>
+
+                        <?php endif; ?>
+
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>

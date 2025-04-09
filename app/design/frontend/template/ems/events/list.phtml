@@ -1,0 +1,81 @@
+<h1>upcoming events</h1>
+<?php
+$upcomig = $this->getUpcomingEvents();
+?>
+<style>
+    th,
+    td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+</style>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>title</th>
+            <th>description</th>
+            <th>date</th>
+            <th>location</th>
+            <th>capacity</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($upcomig as $event): ?>
+            <tr>
+                <td><?php echo $event->getId(); ?></td>
+                <td><?php echo $event->getTitle() ?></td>
+                <td><?php echo $event->getDescription() ?></td>
+                <td><?php echo date('M j, Y', strtotime($event->getDate())); ?></td>
+                <td><?php echo $event->getLocation() ?></td>
+                <td><?php echo $event->getCapacity() ?></td>
+
+                <?php if ($this->getTotaluser($event->getId()) < $event->getCapacity()): ?>
+                    <?php if ($this->already($event->getId())): ?>
+                        <td>already register</td>
+                    <?php else: ?>
+                        <td>
+                            <a href="<?php echo $this->getUrl('*/*/register'); ?>?id=<?php echo $event->getId() ?>"
+                                onclick="return confirm('Are you sure you want to Register this Event')">register</a>
+                        </td>
+                    <?php endif; ?>
+
+                <?php else: ?>
+                    <td>Event full</td>
+                <?php endif; ?>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+
+<h1 class="" style="margin-top: 50px;">past event</h1>
+<?php $pastDatas = $this->getPast(); ?>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>title</th>
+            <th>description</th>
+            <th>date</th>
+            <th>location</th>
+            <th>capacity</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($pastDatas as $pastData): ?>
+            <tr>
+                <td><?php echo $pastData->getId(); ?></td>
+                <td><?php echo $pastData->getTitle() ?></td>
+                <td><?php echo $pastData->getDescription() ?></td>
+                <td><?php echo date('M j, Y', strtotime($pastData->getDate())); ?></td>
+                <td><?php echo $pastData->getLocation() ?></td>
+                <td><?php echo $pastData->getCapacity() ?></td>
+                <td><?php echo $pastData->getStatus() ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>

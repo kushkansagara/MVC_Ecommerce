@@ -1,0 +1,54 @@
+<?php
+$data = $this->getEventForEdit();
+?>
+<?php echo $this->getHtml('formStart', [
+    'method' => 'POST',
+    'action' => $this->getUrl('*/*/save'),
+    'enctype' => 'multipart/form-data'
+]); ?>
+<br>
+<?php echo $this->getHtml('hidden', [
+    'id' => 'id',
+    'name' => "ems_events[id]",
+    'value' => !empty($data) ? $data->getId() : ""
+]); ?>
+<br>
+<?php echo $this->getHtml('label', ['for' => 'title']); ?>
+<?php echo $this->getHtml('text', [
+    'id' => 'title',
+    'name' => "ems_events[title]",
+    'value' => !empty($data) ? $data->getTitle() : ""
+]); ?>
+<br>
+<?php echo $this->getHtml('label', ['for' => 'description']); ?>
+<?php echo $this->getHtml('textarea', [
+    'id' => 'description',
+    'name' => "ems_events[description]",
+    'value' => !empty($data) ? $data->getDescription() : ""
+]); ?>
+<br>
+<?php echo $this->getHtml('label', ['for' => 'date']); ?>
+<?php echo $this->getHtml('date', [
+    'id' => 'date',
+    'name' => "ems_events[date]",
+    'value' => !empty($data) ? $data->getDate() : ""
+]); ?>
+<br>
+<?php echo $this->getHtml('label', ['for' => 'location']); ?>
+<?php echo $this->getHtml('text', [
+    'id' => 'location',
+    'name' => "ems_events[location]",
+    'value' => !empty($data) ? $data->getLocation() : ""
+]); ?>
+
+<br>
+<?php echo $this->getHtml('label', ['for' => 'capacity']); ?>
+<?php echo $this->getHtml('number', [
+    'id' => 'capavity',
+    'name' => "ems_events[capacity]",
+    'value' => !empty($data) ? $data->getCapacity() : ""
+]); ?>
+
+<br>
+<button type="submit">Submit</button>
+<?php echo $this->getHtml('formEnd', []); ?>

@@ -6,24 +6,22 @@ class Admin_Block_Widget_Grid_Import_Csv extends Admin_Block_Widget_Grid
     {
         $this->setTemplate('admin/widget/grid/import/csv.phtml');
     }
-
-    // public function getCsvFile()
-    // {
-    //     $export = $this->getRequest()->getQuery('export');
-    //     if ($export) {
-    //         $datas = $this->getParent()->getCollection()->getData();
-    //         header('Content-Type: text/csv; charset=utf-8');
-    //         header('Content-Disposition: attachment; filename=data.csv');
-    //         $output = fopen("php://output", "w");
-    //         $key = array_keys($datas[0]->getData());
-    //         fputcsv($output, $key);
-    //         foreach ($datas as $data) {
-    //             fputcsv($output, $data->getData());
-    //         }
-    //         fclose($output);
-    //         exit;
-    //     }
-    // }
-
+    public function importData()
+    {
+        if (isset($_POST["Import"])) {
+            $filename = $_FILES["file"]["tmp_name"];
+            if (pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION) != "csv") {
+                echo "Please upload a CSV file.";
+            } else {
+                $file = fopen($filename, "r");
+                $columns = fgetcsv($file, 1000, ",");
+                while (($csvData = fgetcsv($file, 1000, ",")) !== false) {
+                    $data = array_combine($columns, $csvData);
+                    $product = Mage::getModel('catalog/product');
+                    $product->setData($data)->save();
+                }
+            }
+        }
+    }
 }
 ?>
