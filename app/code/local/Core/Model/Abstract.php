@@ -7,7 +7,7 @@ class Core_Model_Abstract
     protected $_data = null;
     public function init()
     {
-
+        return $this;
     }
     public function __construct()
     {
@@ -60,6 +60,7 @@ class Core_Model_Abstract
             function ($matches) {
                 return '_' . strtolower($matches[0]);
             },
+
             $input
         );
         return ltrim($snakeCase, '_');

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Recursive Q&A Table with AJAX</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            text-align: left;
+            padding: 12px;
+        }
+
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            vertical-align: top;
+            position: relative;
+        }
+
+        .node-content {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .sub-block {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .add-form {
+            display: flex;
+            margin-top: 8px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex-grow: 1;
+            margin-right: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .root-form {
+            display: flex;
+            margin-bottom: 20px;
+            max-width: 500px;
+        }
+
+        .empty-message {
+            color: #666;
+            font-style: italic;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Recursive Q&A Table with AJAX</h3>
+
+    <div class="root-form">
+        <input type="text" id="rootInput" placeholder="Enter main question...">
+        <button onclick="addRootAJAX()">Add Root Question</button>
+    </div>
+
+    <div id="tableContainer"></div>
+
+    <script>
+        let nodeId = 0;
+        let tree = [];
+
+        function createNode(text) {
+            return {
+                id: ++nodeId,
+                text,
+                children: []
+            };
+        }
+
+        function ajaxAddNode(parentId, text) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const newNode = createNode(text);
+                    if (parentId === null) {
+                        tree.push(newNode);
+                    } else {
+                        const parent = findNode(tree, parentId);
+                        if (parent) parent.children.push(newNode);
+                    }
+                    resolve();
+                }, 200);
+            });
+        }
+
+        function addRootAJAX() {
+            const input = document.getElementById('rootInput');
+            const text = input.value.trim();
+            if (text) {
+                ajaxAddNode(null, text).then(render);
+                input.value = '';
+            }
+        }
+
+        function addChildAJAX(parentId, inputId) {
+            const input = document.getElementById(inputId);
+            const text = input.value.trim();
+            if (text) {
+                ajaxAddNode(parentId, text).then(render);
+                input.value = '';
+            }
+        }
+
+        function findNode(nodes, id) {
+            for (const node of nodes) {
+                if (node.id === id) return node;
+                const found = findNode(node.children, id);
+                if (found) return found;
+            }
+            return null;
+        }
+
+        function getPaths(node, path = []) {
+            const newPath = [...path, node];
+            if (node.children.length === 0) return [newPath];
+            return node.children.flatMap(child => getPaths(child, newPath));
+        }
+
+        function getAllPaths() {
+            return tree.flatMap(root => getPaths(root));
+        }
+
+        function getMaxDepth(nodes, level = 0) {
+            if (nodes.length === 0) return level;
+            return Math.max(...nodes.map(n => getMaxDepth(n.children, level + 1)));
+        }
+
+        function countLeafPaths(node) {
+            if (node.children.length === 0) return 1;
+            return node.children.reduce((sum, child) => sum + countLeafPaths(child), 0);
+        }
+
+        function render() {
+            const tableContainer = document.getElementById("tableContainer");
+            tableContainer.innerHTML = "";
+
+            if (tree.length === 0) {
+                tableContainer.innerHTML =
+                    "<p class='empty-message'>No questions added yet. Add a root question to get started.</p>";
+                return;
+            }
+
+            const table = document.createElement("table");
+            const thead = document.createElement("thead");
+            const tbody = document.createElement("tbody");
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            tableContainer.appendChild(table);
+
+            const maxDepth = getMaxDepth(tree);
+            const headerRow = document.createElement("tr");
+            for (let i = 0; i <= maxDepth; i++) {
+                const th = document.createElement("th");
+                th.textContent = `Level ${i + 1}`;
+                headerRow.appendChild(th);
+            }
+            thead.appendChild(headerRow);
+
+            const paths = getAllPaths();
+            const rendered = new Map();
+
+            paths.forEach(path => {
+                const tr = document.createElement("tr");
+
+                path.forEach((node, colIndex) => {
+                    const key = `${node.id}-${colIndex}`;
+
+                    if (!rendered.has(key)) {
+                        const td = document.createElement("td");
+                        td.rowSpan = countLeafPaths(node);
+
+                        const inputId = `input-${node.id}`;
+
+                        const contentDiv = document.createElement("div");
+                        contentDiv.className = "node-content";
+                        contentDiv.textContent = node.text;
+
+                        const subBlock = document.createElement("div");
+                        subBlock.className = "sub-block";
+
+                        const input = document.createElement("input");
+                        input.type = "text";
+                        input.id = inputId;
+                        input.placeholder = "Enter sub-answer...";
+
+                        const button = document.createElement("button");
+                        button.textContent = "Add";
+                        button.onclick = () => addChildAJAX(node.id, inputId);
+
+                        input.addEventListener('keypress', function (e) {
+                            if (e.key === 'Enter') {
+                                addChildAJAX(node.id, inputId);
+                            }
+                        });
+
+                        subBlock.appendChild(input);
+                        subBlock.appendChild(button);
+
+                        td.appendChild(contentDiv);
+                        td.appendChild(subBlock);
+
+                        tr.appendChild(td);
+                        rendered.set(key, true);
+                    }
+                });
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('rootInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') addRootAJAX();
+        });
+
+        render();
+    </script>
+</body>
+
+</html>

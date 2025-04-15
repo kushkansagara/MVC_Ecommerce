@@ -41,15 +41,16 @@ class core_Model_Resource_Collection_Abstract
         foreach ($data as &$_data) {
             $_model = new $this->_model;
             $_data = $_model->setData($_data);
-
         }
         return $data;
     }
 
     public function addFieldToFilter($field, $condition)
     {
-        if (!is_array($condition)) {
+        if (!is_array($condition) && $condition != '') {
             $condition = ['eq' => $condition];
+        } else if (!is_array($condition) && $condition == '') {
+            $condition = ['IS' => $condition];
         }
         $this->_select['WHERE'][$field][] = $condition;
         return $this;
@@ -151,10 +152,8 @@ class core_Model_Resource_Collection_Abstract
             }
             $query = $query . " " . $ordersql;
         }
-        // echo $query;
         return $query;
     }
-
     public function where($field, $value)
     {
         if (is_array($value)) {
@@ -189,6 +188,9 @@ class core_Model_Resource_Collection_Abstract
                         break;
                     case 'EQ':
                         $where = "{$field} = '{$_value}'";
+                        break;
+                    case 'IS':
+                        $where = "{$field} is null";
                         break;
 
                     default:

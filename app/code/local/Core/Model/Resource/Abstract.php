@@ -62,7 +62,7 @@ class core_Model_Resource_Abstract
                 $this->_primaryKey,
                 $primaryId
             );
-            //echo $sql;
+
             return $this->getAdapter()->query($sql);
         } else {
             $columns = [];

@@ -1,6 +1,7 @@
 <?php
 class Core_Block_Layout extends Core_Block_Template
 {
+
     protected $_template;
     public function __construct()
     {

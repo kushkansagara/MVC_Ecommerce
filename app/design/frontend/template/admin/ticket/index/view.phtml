@@ -1,0 +1,75 @@
+<?php
+$ticketName = $this->getName()->getTitle();
+
+$tableArray = $this->dataArray();
+$tree = $this->buildTree($tableArray);
+echo $this->render($tree, $ticketName);
+
+?>
+<style>
+    table,
+    td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    td {
+        padding: 8px;
+        vertical-align: top;
+        min-width: 150px;
+    }
+
+    .input-container {
+        display: flex;
+        gap: 6px;
+        margin-top: 5px;
+    }
+
+    .control-panel {
+        margin-bottom: 15px;
+    }
+</style>
+<div>
+    <span class="d-none" id="ticketId"><?php echo $this->getId() ?></span>
+    <button id="saveall">save data</button>
+</div>
+
+<script defer>
+    function openTextbox() {
+        const td = event.target.closest('td');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Enter comment';
+        td.appendChild(document.createElement('br'));
+        td.appendChild(input);
+    }
+
+    $('#saveall').on('click', function () {
+        $('input[type="text"]').each(function (index, element) {
+            let val = $(element).val();
+            let parentId = $(element).parent().data('node-id');
+            ajaxCall(val, parentId);
+        });
+
+    })
+
+    function ajaxCall(cmt, pid) {
+        let tid = $('#ticketId').html().trim();
+        $.ajax({
+            url: "http://localhost/mvc_main/admin/ticket_index/savecomment",
+            type: 'post',
+            data: {
+                comment: cmt,
+                parent_id: pid,
+                ticket_id: tid
+            },
+            success: function (res) {
+                console.log(res);
+                window.location.reload();
+            },
+            error: function (err) {
+                console.log(err);
+            },
+        });
+    }
+</script>
