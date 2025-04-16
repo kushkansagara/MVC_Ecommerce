@@ -36,13 +36,25 @@ class Admin_Controller_Ticket_Index extends Core_Controller_Admin_Action
     public function savecommentAction()
     {
         $data = $this->getRequest()->getParams();
-        Mage::log($data);
         if ($data['parent_id'] == 0) {
             unset($data['parent_id']);
         }
         Mage::getModel('ticket/comment')
             ->setData($data)
             ->save();
+    }
+    public function completeCommentAction()
+    {
+        $data = $this->getRequest()->getParams();
+        $ids = $data['completeId'];
+
+        foreach ($ids as $id) {
+            Mage::getModel('ticket/comment')
+                ->setIsActive(0)
+                ->setCommentId($id)
+                ->save();
+        }
+
     }
 }
 ?>

@@ -1,6 +1,5 @@
 <?php
 $ticketName = $this->getName()->getTitle();
-
 $tableArray = $this->dataArray();
 $tree = $this->buildTree($tableArray);
 echo $this->render($tree, $ticketName);
@@ -31,6 +30,28 @@ echo $this->render($tree, $ticketName);
 </style>
 <div>
     <span class="d-none" id="ticketId"><?php echo $this->getId() ?></span>
+    <form action="<?php echo $this->getUrl('*/*/*') ?>" method="get">
+        <input type="hidden" name="id" value="<?php echo $this->getId() ?>">
+        <button name="all" value="1">Show complete comment also</button>
+        <button name="" value="">Only continue comment</button>
+    </form>
+    <div id="loader-overlay" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,255,255,0.8);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+">
+        Saving... Please wait.
+    </div>
     <button id="saveall">save data</button>
 </div>
 
@@ -44,13 +65,69 @@ echo $this->render($tree, $ticketName);
         td.appendChild(input);
     }
 
-    $('#saveall').on('click', function () {
-        $('input[type="text"]').each(function (index, element) {
-            let val = $(element).val();
-            let parentId = $(element).parent().data('node-id');
-            ajaxCall(val, parentId);
+    function complete(btn) {
+        let finalCompleteIds = [];
+        let tds = $(btn).closest('tr').find('td');
+        console.log(tds);
+        tds.each(function (index, td) {
+            let rowspan = parseInt($(td).attr('rowspan')) || 1;
+            if (rowspan > 1) {
+                $(td).attr('rowspan', rowspan - 1);
+            }
         });
 
+        tds.each(function (index, td) {
+            if ($(td).attr('rowspan') == 1) {
+                let completeId = $(td).data('node-complete');
+                if (completeId) {
+                    finalCompleteIds.push(completeId);
+                }
+            }
+        });
+        ajaxcomplete(finalCompleteIds);
+    }
+
+    function completebtn(btn) {
+        let finalCompleteIds = [];
+        let tds = $(btn).closest('tr').find('td');
+
+        tds.each(function (index, td) {
+            if ($(td).attr('rowspan') == 1) {
+                let completeId = $(td).data('node-complete');
+                if (completeId) {
+                    finalCompleteIds.push(completeId);
+                }
+            }
+        });
+        ajaxcomplete(finalCompleteIds);
+    }
+
+    $('#saveall').on('click', function () {
+        $('#loader-overlay').show();
+        const buttons = document.querySelectorAll('button');
+        let arr = [];
+        buttons.forEach(btn => {
+            const val = btn.value;
+            if (val > 0) {
+                arr.push(btn);
+            }
+        });
+        $('input[type="text"]').each(function (index, element) {
+            let val = $(element).val();
+
+            let parentId = $(element).parent().data('node-id');
+            arr.forEach((a, index) => {
+                if (a.value == parentId) {
+                    arr.splice(index, 1);
+                }
+            });
+            ajaxCall(val, parentId);
+        });
+        arr.forEach((a, index) => {
+            complete(a);
+        });
+
+        ajaxcomplete(finalCompleteIds);
     })
 
     function ajaxCall(cmt, pid) {
@@ -62,6 +139,23 @@ echo $this->render($tree, $ticketName);
                 comment: cmt,
                 parent_id: pid,
                 ticket_id: tid
+            },
+            success: function (res) {
+                console.log(res);
+                window.location.reload();
+            },
+            error: function (err) {
+                console.log(err);
+            },
+        });
+    }
+
+    function ajaxcomplete(id) {
+        $.ajax({
+            url: "http://localhost/mvc_main/admin/ticket_index/completeComment",
+            type: 'post',
+            data: {
+                completeId: id
             },
             success: function (res) {
                 console.log(res);
