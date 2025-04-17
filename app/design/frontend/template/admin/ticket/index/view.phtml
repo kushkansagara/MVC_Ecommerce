@@ -1,7 +1,13 @@
 <?php
+
 $ticketName = $this->getName()->getTitle();
-$tableArray = $this->dataArray();
-$tree = $this->buildTree($tableArray);
+$level = $this->getRequest()->getQuery('level');
+if ($level) {
+    $tableArray = $this->dataArray($this->getMaxlevel() - $this->getRequest()->getQuery('level') + 1);
+} else {
+    $tableArray = $this->dataArray();
+}
+$tree = $this->buildTree($tableArray, 0);
 echo $this->render($tree, $ticketName);
 
 ?>
@@ -31,10 +37,22 @@ echo $this->render($tree, $ticketName);
 <div>
     <span class="d-none" id="ticketId"><?php echo $this->getId() ?></span>
     <form action="<?php echo $this->getUrl('*/*/*') ?>" method="get">
-        <input type="hidden" name="id" value="<?php echo $this->getId() ?>">
-        <button name="all" value="1">Show complete comment also</button>
-        <button name="" value="">Only continue comment</button>
+        <label>
+            Filter by Level:
+            <input type="number" name="level" value="<?php echo $this->getRequest()->getParam('level') ?>"
+                onchange="this.form.submit()" />
+            <input type="hidden" name="id" value="<?php echo $this->getId() ?>" />
+        </label>
     </form>
+
+    <form action="<?php echo $this->getUrl('*/*/*') ?>" method="get">
+        <input type="hidden" name="level" value="<?php echo $this->getRequest()->getParam('level') ?>" />
+        <input type="hidden" name="id" value="<?php echo $this->getId() ?>" />
+
+        <button type="submit" name="all" value="1">Show All Comments</button>
+        <button type="submit">Show Active Only</button>
+    </form>
+
     <div id="loader-overlay" style="
     position: fixed;
     top: 0;
@@ -66,25 +84,8 @@ echo $this->render($tree, $ticketName);
     }
 
     function complete(btn) {
-        let finalCompleteIds = [];
-        let tds = $(btn).closest('tr').find('td');
-        console.log(tds);
-        tds.each(function (index, td) {
-            let rowspan = parseInt($(td).attr('rowspan')) || 1;
-            if (rowspan > 1) {
-                $(td).attr('rowspan', rowspan - 1);
-            }
-        });
-
-        tds.each(function (index, td) {
-            if ($(td).attr('rowspan') == 1) {
-                let completeId = $(td).data('node-complete');
-                if (completeId) {
-                    finalCompleteIds.push(completeId);
-                }
-            }
-        });
-        ajaxcomplete(finalCompleteIds);
+        let comment_id = $(btn).parent().data('node-complete');
+        ajaxcomplete(comment_id);
     }
 
     function completebtn(btn) {
@@ -105,32 +106,24 @@ echo $this->render($tree, $ticketName);
     $('#saveall').on('click', function () {
         $('#loader-overlay').show();
         const buttons = document.querySelectorAll('button');
-        let arr = [];
-        buttons.forEach(btn => {
-            const val = btn.value;
-            if (val > 0) {
-                arr.push(btn);
+        let btns = $('button');
+        btns.each(function (i, btn) {
+            let input = $(btn).parent().next().find('input');
+            if ($(btn).text() == 'Complete' && (input.length == 0 || input.val() == '')) {
+                complete(btn);
             }
-        });
+        })
         $('input[type="text"]').each(function (index, element) {
             let val = $(element).val();
 
             let parentId = $(element).parent().data('node-id');
-            arr.forEach((a, index) => {
-                if (a.value == parentId) {
-                    arr.splice(index, 1);
-                }
-            });
-            ajaxCall(val, parentId);
-        });
-        arr.forEach((a, index) => {
-            complete(a);
-        });
+            let level = $(element).parent().data('level') + 1;
 
-        ajaxcomplete(finalCompleteIds);
+            ajaxCall(val, parentId, level);
+        });
     })
 
-    function ajaxCall(cmt, pid) {
+    function ajaxCall(cmt, pid, level) {
         let tid = $('#ticketId').html().trim();
         $.ajax({
             url: "http://localhost/mvc_main/admin/ticket_index/savecomment",
@@ -138,7 +131,8 @@ echo $this->render($tree, $ticketName);
             data: {
                 comment: cmt,
                 parent_id: pid,
-                ticket_id: tid
+                ticket_id: tid,
+                level: level
             },
             success: function (res) {
                 console.log(res);

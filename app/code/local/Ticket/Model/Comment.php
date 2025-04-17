@@ -7,5 +7,23 @@ class Ticket_Model_Comment extends Core_Model_Abstract
         $this->_resourceClassName = "Ticket_Model_Resource_Comment";
         $this->_collectionClassName = "Ticket_Model_Resource_Comment_Collection";
     }
+
+    public function _afterSave()
+    {
+        $comment_id = $this->getCommentId();
+        $this->load($comment_id);
+        $totalChild = Mage::getModel('ticket/comment')
+            ->getCollection()
+            ->addFieldToFilter('parent_id', $this->getParentId())
+            ->addFieldToFilter('is_active', 1)
+            ->select(['COUNT(*)' => 'total'])
+            ->getFirstItem();
+        if ($totalChild->getTotal() == 0 && $this->getParentId() != '') {
+            Mage::getModel('ticket/comment')
+                ->setCommentId($this->getParentId())
+                ->setIsActive(0)
+                ->save();
+        }
+    }
 }
 ?>
